@@ -1,0 +1,1 @@
+﻿global using SELLit.Data.Common.Models;
