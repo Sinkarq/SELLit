@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using SELLit.Data.Infrastructure;
 
 
 namespace SELLit.Data;
@@ -17,7 +18,6 @@ public sealed class ApplicationDbContext : IdentityDbContext<User>
     }
 
     //DbSets
-    public DbSet<Cat> Cats { get; set; }
 
     public override int SaveChanges() => this.SaveChanges(true);
 
@@ -65,6 +65,8 @@ public sealed class ApplicationDbContext : IdentityDbContext<User>
         {
             foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
         }
+        
+        builder.ConfigureRelations();
     }
 
     private static void SetIsDeletedQueryFilter<T>(ModelBuilder builder)

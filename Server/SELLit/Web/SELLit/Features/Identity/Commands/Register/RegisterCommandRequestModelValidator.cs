@@ -21,5 +21,14 @@ public class RegisterCommandRequestModelValidator : AbstractValidator<RegisterCo
         RuleFor(x => x.Username)
             .NotNull().WithMessage(ValidationMessage)
             .NotEmpty().WithMessage(ValidationMessage);
+        
+        RuleFor(x => x.FirstName)
+            .NotNull().WithMessage(ValidationMessage)
+            .NotEmpty().WithMessage(ValidationMessage);
+        
+        RuleFor(x => x.LastName)
+            .NotNull().WithMessage(ValidationMessage)
+            .NotEmpty().WithMessage(ValidationMessage);
+        
     }
 }

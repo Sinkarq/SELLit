@@ -7,7 +7,8 @@ public readonly struct ErrorModel
 {
     public ErrorModel(IEnumerable<string> errors, int statusCode)
     {
-        NullGuardMethods.Guard(statusCode, errors);
+        NullGuardMethods.Guard(statusCode);
+        NullGuardMethods.Guard(errors);
         Errors = errors;
         StatusCode = statusCode;
     }
@@ -15,7 +16,7 @@ public readonly struct ErrorModel
     public ErrorModel(int statusCode)
     {
         NullGuardMethods.Guard(statusCode);
-        Errors = Array.Empty<string>();
+        Errors = Enumerable.Empty<string>();
         StatusCode = statusCode;
     }
 

@@ -12,6 +12,8 @@ using SELLit.Data.Repositories;
 using SELLit.Server.Features.Identity;
 using SELLit.Server.Features.Identity.Commands.Login;
 using SELLit.Server.Infrastructure.Mapping;
+using SELLit.Server.Services;
+using SELLit.Server.Services.Interfaces;
 
 namespace SELLit.Server.Infrastructure.Extensions;
 
@@ -67,6 +69,7 @@ internal static class ServiceCollectionExtensions
             .AddScoped(typeof(IRepository<>), typeof(EfRepository<>))
             .AddAutoMapper()
             .AddTransient<IIdentityService, IdentityService>()
+            .AddSingleton<ICurrentUser, CurrentUser>()
             .AddFluentValidationAutoValidation()
             .AddValidatorsFromAssemblyContaining<LoginCommandRequestModelValidator>();
 

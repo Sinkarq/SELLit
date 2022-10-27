@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace SELLit.Server.Features.Identity;
+﻿namespace SELLit.Server.Features.Identity;
 
 public interface IIdentityService
 {

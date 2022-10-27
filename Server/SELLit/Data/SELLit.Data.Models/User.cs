@@ -1,8 +1,26 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SELLit.Common;
 
 namespace SELLit.Data.Models;
 
-public class User : IdentityUser
+public sealed class User : IdentityUser
 {
-    public IEnumerable<Cat> Cats { get; set; } = new HashSet<Cat>();
+    private HashSet<Product> _products = new();
+
+    public User(string firstName, string lastName, string email, string userName)
+    {
+        NullGuardMethods.Guard(firstName, lastName);
+        this.FirstName = firstName;
+        this.LastName = lastName;
+        this.Email = email;
+        this.UserName = userName;
+    }
+    
+    private User() {}
+    
+    public string FirstName { get; private set; }
+
+    public string LastName { get; private set; }
+    
+    public IReadOnlyCollection<Product> Products => _products;
 }
