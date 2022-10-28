@@ -39,8 +39,6 @@ internal static class ServiceCollectionExtensions
         this IServiceCollection services,
         AppSettings appSettings)
     {
-        var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-
         services
             .AddAuthentication(x =>
             {
@@ -49,6 +47,7 @@ internal static class ServiceCollectionExtensions
             })
             .AddJwtBearer(x =>
             {
+                var key = Encoding.ASCII.GetBytes(appSettings.Secret);
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
                 x.TokenValidationParameters = new TokenValidationParameters
@@ -68,10 +67,15 @@ internal static class ServiceCollectionExtensions
             .AddScoped(typeof(IDeletableEntityRepository<>), typeof(EfDeletableEntityRepository<>))
             .AddScoped(typeof(IRepository<>), typeof(EfRepository<>))
             .AddAutoMapper()
-            .AddTransient<IIdentityService, IdentityService>()
-            .AddSingleton<ICurrentUser, CurrentUser>()
             .AddFluentValidationAutoValidation()
-            .AddValidatorsFromAssemblyContaining<LoginCommandRequestModelValidator>();
+            .AddValidatorsFromAssemblyContaining<LoginCommandModelValidator>()
+            .AddHashids(x =>
+            {
+                x.MinHashLength = 8;
+                x.Salt = "Sinkarq";
+            })
+            .AddTransient<IIdentityService, IdentityService>()
+            .AddSingleton<ICurrentUser, CurrentUser>();
 
     public static IServiceCollection AddSwagger(this IServiceCollection services)
         => services.AddSwaggerGen(c =>

@@ -9,14 +9,14 @@ using SELLit.Server.Infrastructure;
 
 namespace SELLit.Server.Features.Identity.Commands.Login;
 
-public class LoginCommandRequestModel : IRequest<OneOf<LoginCommandOutputModel, InvalidLoginCredentials>>
+public class LoginCommandModel : IRequest<OneOf<LoginCommandResponseModel, InvalidLoginCredentials>>
 {
     public string Username { get; set; }
 
     public string Password { get; set; }
 
     public class
-        LoginCommandRequestHandler : IRequestHandler<LoginCommandRequestModel, OneOf<LoginCommandOutputModel, InvalidLoginCredentials>>
+        LoginCommandRequestHandler : IRequestHandler<LoginCommandModel, OneOf<LoginCommandResponseModel, InvalidLoginCredentials>>
     {
         private readonly UserManager<User> userManager;
         private readonly IIdentityService identityService;
@@ -30,7 +30,7 @@ public class LoginCommandRequestModel : IRequest<OneOf<LoginCommandOutputModel, 
             this.appSettings = appSettings.Value;
         }
 
-        public async Task<OneOf<LoginCommandOutputModel, InvalidLoginCredentials>> Handle(LoginCommandRequestModel request,
+        public async Task<OneOf<LoginCommandResponseModel, InvalidLoginCredentials>> Handle(LoginCommandModel request,
             CancellationToken cancellationToken)
         {
             var user = await this.userManager.FindByNameAsync(request.Username);
@@ -46,9 +46,11 @@ public class LoginCommandRequestModel : IRequest<OneOf<LoginCommandOutputModel, 
                 return new InvalidLoginCredentials();
             }
 
-            var encryptedToken = this.identityService.GenerateJwtToken(user.Id, user.UserName, appSettings.Secret);
+            var roles = await this.userManager.GetRolesAsync(user);
 
-            return new LoginCommandOutputModel()
+            var encryptedToken = this.identityService.GenerateJwtToken(user.Id, user.UserName, appSettings.Secret, roles);
+
+            return new LoginCommandResponseModel()
             {
                 Token = encryptedToken
             };

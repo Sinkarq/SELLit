@@ -9,7 +9,7 @@ public sealed class User : IdentityUser
 
     public User(string firstName, string lastName, string email, string userName)
     {
-        NullGuardMethods.Guard(firstName, lastName);
+        NullGuardMethods.Guard(firstName, lastName, email, userName);
         this.FirstName = firstName;
         this.LastName = lastName;
         this.Email = email;

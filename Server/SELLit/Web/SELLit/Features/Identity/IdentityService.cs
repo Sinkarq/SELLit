@@ -19,17 +19,29 @@ public sealed class IdentityService : IIdentityService
     public string GenerateJwtToken(
         string userId,
         string username,
-        string secret)
+        string secret,
+        IList<string> roles)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(secret);
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new[]
+        
+        var claimsArray = new List<Claim>();
+
+        claimsArray.AddRange(
+            new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, userId),
                 new Claim(ClaimTypes.Name, username),
-            }),
+            });
+
+        claimsArray.AddRange(
+            roles.Select(
+                role =>
+                    new Claim(ClaimTypes.Role, role)));
+        
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claimsArray),
             Expires = DateTime.UtcNow.AddDays(7),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };

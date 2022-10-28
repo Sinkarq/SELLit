@@ -27,8 +27,4 @@
     <ProjectReference Include="..\SELLit.Data.Models\SELLit.Data.Models.csproj" PrivateAssets="All" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Configurations" />
-  </ItemGroup>
-
 </Project>

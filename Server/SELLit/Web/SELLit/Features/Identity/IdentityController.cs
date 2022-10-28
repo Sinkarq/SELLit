@@ -16,11 +16,11 @@ public sealed class IdentityController : ApiController
 
     [HttpPost]
     [Route(nameof(Login))]
-    public async Task<IActionResult> Login(LoginCommandRequestModel model)
+    public async Task<IActionResult> Login(LoginCommandModel model)
     {
         var outputModel = await this.Mediator.Send(model);
         return outputModel.Match<IActionResult>(
             loginCommandOutputModel => this.Ok(loginCommandOutputModel),
-            _ => this.BadRequest("Invalid login credentials"));
+            _ => this.BadRequest(new ErrorModel(new[] {"Invalid login credentials"},400)));
     }
 }

@@ -1,12 +1,11 @@
 using FluentValidation;
+using static SELLit.Common.ValidationConstants;
 
 namespace SELLit.Server.Features.Identity.Commands.Login;
 
-public class LoginCommandRequestModelValidator : AbstractValidator<LoginCommandRequestModel>
+public class LoginCommandModelValidator : AbstractValidator<LoginCommandModel>
 {
-    private const string ValidationMessage = "Please fill in {PropertyName}.";
-
-    public LoginCommandRequestModelValidator()
+    public LoginCommandModelValidator()
     {
         RuleFor(x => x.Username)
             .NotEmpty().WithMessage(ValidationMessage)

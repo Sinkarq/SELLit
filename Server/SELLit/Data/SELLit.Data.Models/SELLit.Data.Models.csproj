@@ -15,4 +15,10 @@
     <ProjectReference Include="..\SELLit.Data.Common\SELLit.Data.Common.csproj" PrivateAssets="All" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="OneOf">
+      <HintPath>..\..\..\..\..\..\.nuget\packages\oneof\3.0.223\lib\netstandard2.0\OneOf.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

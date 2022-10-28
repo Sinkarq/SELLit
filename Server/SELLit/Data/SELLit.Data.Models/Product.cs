@@ -11,11 +11,12 @@ public sealed class Product : BaseDeletableModel<int>
         string phoneNumber, 
         double price, 
         int categoryId,
-        string userId)
+        string userId,
+        int orderCount)
     {
         NullGuardMethods.Guard(title, description, location, phoneNumber, userId);
         NullGuardMethods.Guard(price);
-        NullGuardMethods.Guard(categoryId);
+        NullGuardMethods.Guard(categoryId, orderCount);
         this.Title = title;
         this.Description = description;
         this.Location = location;
@@ -23,6 +24,7 @@ public sealed class Product : BaseDeletableModel<int>
         this.Price = price;
         this.CategoryId = categoryId;
         this.UserId = userId;
+        this.OrderCount = orderCount;
     }
 
     private Product() {}
@@ -36,6 +38,8 @@ public sealed class Product : BaseDeletableModel<int>
     public string PhoneNumber { get; private set; }
 
     public double Price { get; private set; }
+    
+    public int OrderCount { get; private set; }
 
     public string UserId { get; set; }
     public User User { get; private set; }
