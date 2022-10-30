@@ -10,11 +10,27 @@ using SELLit.Server.Features.Category.Queries.GetAll;
 
 namespace SELLit.Server.Features.Category;
 
-public class CategoryController : ApiController
+public class CategoriesController : ApiController
 {
     private readonly IHashids hashids;
 
-    public CategoryController(IHashids hashids) => this.hashids = hashids;
+    public CategoriesController(IHashids hashids) => this.hashids = hashids;
+    
+    [HttpGet]
+    public async Task<IActionResult> GetCategories()
+    {
+        var query = new GetAllCategoriesQuery();
+        var categories = await this.Mediator.Send(query);
+
+        return this.Ok(categories);
+    }
+
+    [HttpGet]
+    [Route("/[controller]/{id:hashids}")]
+    public async Task<IActionResult> GetCategory([FromRoute] GetCategoryQuery query)
+        => (await this.Mediator.Send(query)).Match<IActionResult>(
+            category => this.Ok(category),
+            _ => this.NotFound());
 
     [HttpPost]
     [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
@@ -44,20 +60,4 @@ public class CategoryController : ApiController
             _ => this.Ok(),
             _ => this.NotFound()
         );
-
-    [HttpGet]
-    public async Task<IActionResult> GetCategories()
-    {
-        var query = new GetAllCategoriesQuery();
-        var categories = await this.Mediator.Send(query);
-
-        return this.Ok(categories);
-    }
-
-    [HttpGet]
-    [Route("/[controller]/{id:hashids}")]
-    public async Task<IActionResult> GetCategory([FromRoute] GetCategoryQuery query)
-        => (await this.Mediator.Send(query)).Match<IActionResult>(
-            category => this.Ok(category),
-            _ => this.NotFound());
 }

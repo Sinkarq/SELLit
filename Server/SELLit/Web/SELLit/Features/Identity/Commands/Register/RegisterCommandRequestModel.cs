@@ -7,7 +7,7 @@ using SELLit.Server.Infrastructure.Mapping.Interfaces;
 
 namespace SELLit.Server.Features.Identity.Commands.Register;
 
-public class RegisterCommandRequestModel : IRequest<OneOf<RegisterCommandOutputModel, InvalidLoginCredentials>>, IMapTo<User>
+public sealed class RegisterCommandRequestModel : IRequest<OneOf<RegisterCommandOutputModel, InvalidLoginCredentials>>, IMapTo<User>
 {
     public string FirstName { get; set; }
 
@@ -19,7 +19,7 @@ public class RegisterCommandRequestModel : IRequest<OneOf<RegisterCommandOutputM
 
     public string Email { get; set; }
 
-    public class RegisterCommandRequestModelHandler : IRequestHandler<RegisterCommandRequestModel,
+    public sealed class RegisterCommandRequestModelHandler : IRequestHandler<RegisterCommandRequestModel,
         OneOf<RegisterCommandOutputModel, InvalidLoginCredentials>>
     {
         private readonly UserManager<User> userManager;

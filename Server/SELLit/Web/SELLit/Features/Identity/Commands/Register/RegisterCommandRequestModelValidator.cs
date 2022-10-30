@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace SELLit.Server.Features.Identity.Commands.Register;
 
-public class RegisterCommandRequestModelValidator : AbstractValidator<RegisterCommandRequestModel>
+public sealed class RegisterCommandRequestModelValidator : AbstractValidator<RegisterCommandRequestModel>
 {
     private const string ValidationMessage = "Please fill in {PropertyName}.";
 

@@ -7,7 +7,7 @@ public sealed class CreateCategoryCommand : IRequest<CreateCategoryCommandRespon
 {
     public string Name { get; set; }
 
-    public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, CreateCategoryCommandResponseModel>
+    public sealed class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, CreateCategoryCommandResponseModel>
     {
         private readonly IDeletableEntityRepository<Data.Models.Category> categoryRepository;
 

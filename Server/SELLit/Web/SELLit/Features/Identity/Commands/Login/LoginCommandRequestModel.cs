@@ -1,22 +1,20 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using OneOf;
 using OneOf.Types;
 using SELLit.Common;
-using SELLit.Server.Infrastructure;
 
 namespace SELLit.Server.Features.Identity.Commands.Login;
 
-public class LoginCommandModel : IRequest<OneOf<LoginCommandResponseModel, InvalidLoginCredentials>>
+public sealed class LoginCommandRequestModel : IRequest<OneOf<LoginCommandResponseModel, InvalidLoginCredentials>>
 {
     public string Username { get; set; }
 
     public string Password { get; set; }
 
-    public class
-        LoginCommandRequestHandler : IRequestHandler<LoginCommandModel, OneOf<LoginCommandResponseModel, InvalidLoginCredentials>>
+    public sealed class LoginCommandRequestHandler : 
+        IRequestHandler<LoginCommandRequestModel, OneOf<LoginCommandResponseModel, InvalidLoginCredentials>>
     {
         private readonly UserManager<User> userManager;
         private readonly IIdentityService identityService;
@@ -30,7 +28,7 @@ public class LoginCommandModel : IRequest<OneOf<LoginCommandResponseModel, Inval
             this.appSettings = appSettings.Value;
         }
 
-        public async Task<OneOf<LoginCommandResponseModel, InvalidLoginCredentials>> Handle(LoginCommandModel request,
+        public async Task<OneOf<LoginCommandResponseModel, InvalidLoginCredentials>> Handle(LoginCommandRequestModel request,
             CancellationToken cancellationToken)
         {
             var user = await this.userManager.FindByNameAsync(request.Username);

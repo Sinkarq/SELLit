@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using OneOf;
 using OneOf.Types;
 using SELLit.Data.Common.Repositories;
@@ -23,9 +22,7 @@ public sealed class RenameCategoryCommand : IRequest<OneOf<RenameCategoryCommand
         public async Task<OneOf<RenameCategoryCommandResponseModel, NotFound>> Handle(RenameCategoryCommand request, CancellationToken cancellationToken)
         {
             var category = await this.categoryRepository
-                .AllAsNoTracking()
-                .Where(x => x.Id == request.Id)
-                .FirstOrDefaultAsync(cancellationToken);
+                .Collection().FindAsync(request.Id, cancellationToken);
 
             if (category is null)
             {

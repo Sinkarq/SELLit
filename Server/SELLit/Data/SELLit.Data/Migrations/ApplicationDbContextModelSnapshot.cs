@@ -183,7 +183,7 @@ namespace SELLit.Data.Migrations
 
                     b.HasIndex("IsDeleted");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("SELLit.Data.Models.Product", b =>
@@ -202,6 +202,9 @@ namespace SELLit.Data.Migrations
 
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("DeliveryResponsibility")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -243,7 +246,7 @@ namespace SELLit.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Product");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("SELLit.Data.Models.User", b =>

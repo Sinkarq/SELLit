@@ -12,7 +12,7 @@ using SELLit.Data;
 namespace SELLit.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221028185100_Initial")]
+    [Migration("20221030072311_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -185,7 +185,7 @@ namespace SELLit.Data.Migrations
 
                     b.HasIndex("IsDeleted");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("SELLit.Data.Models.Product", b =>
@@ -204,6 +204,9 @@ namespace SELLit.Data.Migrations
 
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("DeliveryResponsibility")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -245,7 +248,7 @@ namespace SELLit.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Product");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("SELLit.Data.Models.User", b =>

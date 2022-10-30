@@ -10,3 +10,7 @@ public readonly struct InvalidLoginCredentials
 
     public IEnumerable<IdentityError> Errors { get; }
 }
+
+public readonly struct Unauthorized
+{
+}

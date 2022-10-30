@@ -16,9 +16,9 @@ public sealed class IdentityController : ApiController
 
     [HttpPost]
     [Route(nameof(Login))]
-    public async Task<IActionResult> Login(LoginCommandModel model)
+    public async Task<IActionResult> Login(LoginCommandRequestModel requestModel)
     {
-        var outputModel = await this.Mediator.Send(model);
+        var outputModel = await this.Mediator.Send(requestModel);
         return outputModel.Match<IActionResult>(
             loginCommandOutputModel => this.Ok(loginCommandOutputModel),
             _ => this.BadRequest(new ErrorModel(new[] {"Invalid login credentials"},400)));

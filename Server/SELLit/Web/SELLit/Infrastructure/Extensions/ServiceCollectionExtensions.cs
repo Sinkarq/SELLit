@@ -68,7 +68,7 @@ internal static class ServiceCollectionExtensions
             .AddScoped(typeof(IRepository<>), typeof(EfRepository<>))
             .AddAutoMapper()
             .AddFluentValidationAutoValidation()
-            .AddValidatorsFromAssemblyContaining<LoginCommandModelValidator>()
+            .AddValidatorsFromAssemblyContaining<LoginCommandValidator>()
             .AddHashids(x =>
             {
                 x.MinHashLength = 8;

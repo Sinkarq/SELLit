@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using SELLit.Data.Infrastructure;
 
-
 namespace SELLit.Data;
 
 public sealed class ApplicationDbContext : IdentityDbContext<User>
@@ -18,6 +17,8 @@ public sealed class ApplicationDbContext : IdentityDbContext<User>
     }
 
     //DbSets
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Product> Products { get; set; }
 
     public override int SaveChanges() => this.SaveChanges(true);
 

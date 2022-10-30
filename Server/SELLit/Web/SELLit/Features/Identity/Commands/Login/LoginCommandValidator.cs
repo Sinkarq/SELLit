@@ -3,9 +3,9 @@ using static SELLit.Common.ValidationConstants;
 
 namespace SELLit.Server.Features.Identity.Commands.Login;
 
-public class LoginCommandModelValidator : AbstractValidator<LoginCommandModel>
+public sealed class LoginCommandValidator : AbstractValidator<LoginCommandRequestModel>
 {
-    public LoginCommandModelValidator()
+    public LoginCommandValidator()
     {
         RuleFor(x => x.Username)
             .NotEmpty().WithMessage(ValidationMessage)

@@ -1,7 +1,5 @@
 using System.Text.Json.Serialization;
-using AspNetCore.Hashids.Mvc;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OneOf;
 using OneOf.Types;
@@ -27,9 +25,7 @@ public sealed class DeleteCategoryCommand : IRequest<OneOf<DeleteCategoryCommand
             DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
             var category = await this.categoryRepository
-                .AllAsNoTracking()
-                .Where(x => x.Id == request.Id)
-                .FirstOrDefaultAsync(cancellationToken);
+                .Collection().FindAsync(request.Id, cancellationToken);
 
             if (category is null)
             {
