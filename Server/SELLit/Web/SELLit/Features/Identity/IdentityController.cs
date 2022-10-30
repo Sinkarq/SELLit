@@ -8,18 +8,22 @@ namespace SELLit.Server.Features.Identity;
 public sealed class IdentityController : ApiController
 {
     [HttpPost]
-    [Route(nameof(Register))]
-    public async Task<IActionResult> Register(RegisterCommandRequestModel model) =>
+    [Route(Routes.Identity.Register)]
+    public async Task<IActionResult> Register(
+        [FromBody]
+        RegisterCommand model) =>
         (await this.Mediator.Send(model)).Match<IActionResult>(
             _ => this.Ok(),
             credentials => this.BadRequest(new ErrorModel(credentials.Errors.Select(x => x.Description), 400)));
 
     [HttpPost]
-    [Route(nameof(Login))]
-    public async Task<IActionResult> Login(LoginCommandRequestModel requestModel)
+    [Route(Routes.Identity.Login)]
+    public async Task<IActionResult> Login(
+        [FromBody]
+        LoginCommand requestModel)
     {
-        var outputModel = await this.Mediator.Send(requestModel);
-        return outputModel.Match<IActionResult>(
+        var response = await this.Mediator.Send(requestModel);
+        return response.Match<IActionResult>(
             loginCommandOutputModel => this.Ok(loginCommandOutputModel),
             _ => this.BadRequest(new ErrorModel(new[] {"Invalid login credentials"},400)));
     }

@@ -22,7 +22,7 @@ public sealed class ApplicationDbContextSeeder : ISeeder
         var seeders = new List<ISeeder>
         {
             new RolesSeeder(),
-            new AdminSeeder()
+            new UserSeeder()
         };
 
         foreach (var seeder in seeders)

@@ -6,7 +6,7 @@ public readonly struct InvalidLoginCredentials
 {
     public InvalidLoginCredentials(IEnumerable<IdentityError> errors) => Errors = errors;
 
-    public InvalidLoginCredentials() => this.Errors = Array.Empty<IdentityError>();
+    public InvalidLoginCredentials() => this.Errors = Enumerable.Empty<IdentityError>();
 
     public IEnumerable<IdentityError> Errors { get; }
 }

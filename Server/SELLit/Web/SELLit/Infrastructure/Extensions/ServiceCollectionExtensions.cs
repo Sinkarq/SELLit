@@ -17,13 +17,14 @@ using SELLit.Server.Services.Interfaces;
 
 namespace SELLit.Server.Infrastructure.Extensions;
 
-internal static class ServiceCollectionExtensions
+public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddIdentity(this IServiceCollection services)
     {
         services
             .AddIdentity<User, IdentityRole>(options =>
             {
+                options.User.RequireUniqueEmail = true;
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;

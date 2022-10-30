@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using SELLit.Data;
 using SELLit.Data.Seeding;
 
@@ -20,9 +21,19 @@ internal static class ApplicationBuilderExtensions
     {
         using var serviceScope = app.ApplicationServices.CreateScope();
         var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        dbContext.Database.Migrate();
+
+        if (!dbContext.Database.IsInMemory())
+        {
+            dbContext.Database.Migrate();
+        }
         new ApplicationDbContextSeeder().SeedAsync(dbContext, serviceScope.ServiceProvider).GetAwaiter().GetResult();
 
         return app;
     }
+    
+    private static bool IsInMemory(this DatabaseFacade database)
+    {
+        return database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory";
+    }
+    
 }

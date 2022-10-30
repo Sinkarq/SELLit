@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace SELLit.Server.Features;
 
 [ApiController]
-[Route("[controller]")]
 public abstract class ApiController : ControllerBase
 {
     private IMediator? mediator;

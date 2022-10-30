@@ -4,7 +4,7 @@ using SELLit.Common;
 
 namespace SELLit.Data.Seeding;
 
-internal sealed class RolesSeeder : ISeeder
+public sealed class RolesSeeder : ISeeder
 {
     public async Task SeedAsync(ApplicationDbContext dbContext, IServiceProvider serviceProvider)
     {

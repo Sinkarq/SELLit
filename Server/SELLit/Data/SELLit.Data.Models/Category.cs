@@ -19,10 +19,10 @@ public sealed class Category : BaseDeletableModel<int>
 
     public IReadOnlyCollection<Product> Products => _products;
 
-    public void Rename(string newName)
+    public void Update(string name)
     {
-        Guard.IsNotNullOrEmpty(newName);
-        Guard.IsNotNullOrWhiteSpace(newName);
-        this.Name = newName;
+        Guard.IsNotNullOrEmpty(name);
+        Guard.IsNotNullOrWhiteSpace(name);
+        this.Name = name;
     }
 }

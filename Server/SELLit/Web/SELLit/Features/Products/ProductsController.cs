@@ -18,9 +18,9 @@ public class ProductsController : ApiController
     
     [HttpGet]
     [AllowAnonymous]
-    [Route("/[controller]/{id:hashids}")]
+    [Route(Routes.Products.Get)]
     public async Task<IActionResult> GetProduct(
-        [FromRoute]
+        [FromRoute] 
         GetProductQuery query) 
         => (await this.Mediator.Send(query)).Match<IActionResult>(
             _ => this.Ok(_),
@@ -28,10 +28,12 @@ public class ProductsController : ApiController
 
     [HttpGet]
     [AllowAnonymous]
+    [Route(Routes.Products.GetAll)]
     public async Task<IActionResult> GetProducts()
         => this.Ok(await this.Mediator.Send(new GetAllProductsQuery()));
 
     [HttpPost]
+    [Route(Routes.Products.Create)]
     public async Task<IActionResult> CreateProduct(
         [FromBody]
         CreateProductCommand command)
@@ -45,6 +47,7 @@ public class ProductsController : ApiController
     }
 
     [HttpPut]
+    [Route(Routes.Products.Update)]
     public async Task<IActionResult> UpdateProduct(
         [FromBody]
         UpdateProductCommand command)
@@ -58,8 +61,10 @@ public class ProductsController : ApiController
     }
 
     [HttpDelete]
+    [Route(Routes.Products.Delete)]
     public async Task<IActionResult> DeleteProduct(
-        [FromBody] DeleteProductCommand command)
+        [FromRoute] 
+        DeleteProductCommand command)
         => (await this.Mediator.Send(command)).Match<IActionResult>(
             _ => this.Ok(), 
             _ => this.NotFound(),

@@ -1,11 +1,11 @@
 using FluentValidation;
 using SELLit.Common;
 
-namespace SELLit.Server.Features.Products.Commands.Delete;
+namespace SELLit.Server.Features.Categories.Queries.Get;
 
-public sealed class DeleteProductCommandValidator : AbstractValidator<DeleteProductCommand>
+public sealed class GetCategoryQueryValidator : AbstractValidator<GetCategoryQuery>
 {
-    public DeleteProductCommandValidator()
+    public GetCategoryQueryValidator()
     {
         RuleFor(x => x.Id)
             .NotNull()

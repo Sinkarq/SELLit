@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
+using AspNetCore.Hashids.Mvc;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using OneOf;
 using OneOf.Types;
 using SELLit.Data.Common.Repositories;
@@ -9,10 +11,8 @@ namespace SELLit.Server.Features.Products.Commands.Delete;
 
 public sealed class DeleteProductCommand : IRequest<OneOf<DeleteProductCommandResponseModel, NotFound, Unauthorized>>
 {
-    [JsonConverter(typeof(HashidsJsonConverter))]
+    [ModelBinder(typeof(HashidsModelBinder))]
     public int Id { get; set; }
-
-    public bool HardDelete { get; set; }
 
     public sealed class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand,
         OneOf<DeleteProductCommandResponseModel, NotFound, Unauthorized>>
@@ -43,14 +43,7 @@ public sealed class DeleteProductCommand : IRequest<OneOf<DeleteProductCommandRe
                 return new Unauthorized();
             }
 
-            if (request.HardDelete)
-            { 
-                this.productRepository.HardDelete(entity);
-            }
-            else
-            {
-                this.productRepository.Delete(entity);
-            }
+            this.productRepository.Delete(entity);
 
             await this.productRepository.SaveChangesAsync(cancellationToken);
 

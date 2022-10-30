@@ -2,7 +2,7 @@
 
 namespace SELLit.Server.Infrastructure.Extensions;
 
-internal static class ConfigurationSettings
+public static class ConfigurationSettings
 {
     public static string GetDefaultConnection(this IConfiguration configuration)
         => configuration.GetConnectionString("DefaultConnection");
