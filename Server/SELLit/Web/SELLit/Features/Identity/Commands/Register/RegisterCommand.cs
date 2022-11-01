@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using OneOf;
 using OneOf.Types;
 using SELLit.Server.Infrastructure.Mapping.Interfaces;

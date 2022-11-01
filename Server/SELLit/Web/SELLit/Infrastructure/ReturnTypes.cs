@@ -14,3 +14,12 @@ public readonly struct InvalidLoginCredentials
 public readonly struct Unauthorized
 {
 }
+
+public readonly struct UniqueConstraintError
+{
+    private readonly string propertyName;
+    
+    public UniqueConstraintError(string propertyName) => this.propertyName = propertyName;
+
+    public readonly string Message => $"{propertyName} not available.";
+}

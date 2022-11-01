@@ -2,7 +2,7 @@ namespace SELLit.Server.Features;
 
 public static class Routes
 {
-    public static string GetIdRoute(string route, string id) => route.Replace("{id:hashids}", id);
+    private static string GetIdRoute(string route, string id) => route.Replace("{id:hashids}", id);
     
     public static class Identity
     {

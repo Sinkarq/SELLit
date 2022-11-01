@@ -1,11 +1,4 @@
-using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
-using FluentAssertions;
-using SELLit.Data;
-using SELLit.IntegrationTests.Setup;
-using SELLit.Server;
-using SELLit.Server.Features;
 using SELLit.Server.Features.Identity.Commands.Register;
 using SELLit.Server.Infrastructure;
 
@@ -14,6 +7,7 @@ namespace SELLit.IntegrationTests.IdentityController;
 public class RegisterTests : IntegrationTestBase
 {
     private readonly IntegrationTestFactory<Startup, ApplicationDbContext> Factory;
+    private const string RegisterRoute = Routes.Identity.Register;
 
     public RegisterTests(IntegrationTestFactory<Startup, ApplicationDbContext> factory) : base(factory)
     {
@@ -24,14 +18,14 @@ public class RegisterTests : IntegrationTestBase
     public async Task Register_Should_Return_200()
     {
         var httpClient = this.Factory.CreateClient();
-        var response = (await httpClient.PostAsJsonAsync(Routes.Identity.Register, new RegisterCommand
+        await httpClient.PostAsJsonShouldBeWithStatusCodeAsync(RegisterRoute, new RegisterCommand
         {
             FirstName = "Sinan",
             LastName = "Abdulgafurov",
             Username = "Sinkarcheto123",
             Password = "password1234",
             Email = "sinkarq1234565@gmail.com"
-        })).StatusCode.Should().Be(HttpStatusCode.OK);
+        }, HttpStatusCode.OK);
     }
     
     [Fact]
@@ -39,7 +33,7 @@ public class RegisterTests : IntegrationTestBase
     {
         var httpClient = Factory.CreateClient();
         
-        await httpClient.PostAsJsonAsync(Routes.Identity.Register, new RegisterCommand
+        await httpClient.PostAsJsonAsync(RegisterRoute, new RegisterCommand
         {
             FirstName = "Sinan",
             LastName = "Abdulgafurov",
@@ -48,7 +42,7 @@ public class RegisterTests : IntegrationTestBase
             Email = "sinkarq123@gmail.com"
         });
 
-        var response = await httpClient.PostJsonAsyncShouldBeWithStatusCode<ErrorModel, RegisterCommand>(
+        (await httpClient.DeserializePostAsJsonShouldBeWithStatusCodeAsync<ErrorModel, RegisterCommand>(
             Routes.Identity.Register, new RegisterCommand
             {
                 FirstName = "Sinan",
@@ -56,8 +50,6 @@ public class RegisterTests : IntegrationTestBase
                 Username = "Sinkarcheto",
                 Password = "password1234",
                 Email = "sinkarq123@gmail.com"
-            }, HttpStatusCode.BadRequest);
-
-        response.Errors.Should().HaveCount(2);
+            }, HttpStatusCode.BadRequest)).Errors.Should().HaveCount(2);
     }
 }

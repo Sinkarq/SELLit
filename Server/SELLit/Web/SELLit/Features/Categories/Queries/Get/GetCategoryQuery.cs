@@ -29,6 +29,7 @@ public sealed class GetCategoryQuery : IRequest<OneOf<GetCategoryQueryResponseMo
                 .Where(x => x.Id == request.Id)
                 .Select(x => new GetCategoryQueryResponseModel
                 {
+                    Id = x.Id,
                     Name = x.Name
                 }).FirstOrDefaultAsync(cancellationToken);
 

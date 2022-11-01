@@ -7,6 +7,7 @@ using SELLit.Server.Features.Categories.Commands.Delete;
 using SELLit.Server.Features.Categories.Commands.Update;
 using SELLit.Server.Features.Categories.Queries.Get;
 using SELLit.Server.Features.Categories.Queries.GetAll;
+using SELLit.Server.Infrastructure;
 
 namespace SELLit.Server.Features.Categories;
 
@@ -40,14 +41,14 @@ public class CategoriesController : ApiController
     [Route(Routes.Categories.Create)]
     public async Task<IActionResult> CreateCategory(
         [FromBody]
-        CreateCategoryCommand command)
-    {
-        var response = await this.Mediator.Send(command);
-
-        var id = this.hashids.Encode(response.Id);
-
-        return this.CreatedAtAction("GetCategory", new {id}, new { });
-    }
+        CreateCategoryCommand command) =>
+        (await this.Mediator.Send(command)).Match<IActionResult>(
+            x =>
+            {
+                var id = this.hashids.Encode(x.Id);
+                return this.CreatedAtAction("GetCategory", new {id}, new { });
+            },
+            y => this.BadRequest(new ErrorModel(new [] {y.Message}, 400)));
 
     [HttpDelete]
     [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
@@ -66,6 +67,7 @@ public class CategoriesController : ApiController
         [FromBody] UpdateCategoryCommand command)
         => (await this.Mediator.Send(command)).Match<IActionResult>(
             _ => this.Ok(),
-            _ => this.NotFound()
+            _ => this.NotFound(),
+            error => this.BadRequest(new ErrorModel(new []{error.Message}, 400)) 
         );
 }

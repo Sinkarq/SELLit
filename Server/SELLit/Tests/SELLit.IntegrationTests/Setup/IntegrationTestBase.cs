@@ -30,26 +30,34 @@ public class IntegrationTestBase : IClassFixture<IntegrationTestFactory<Startup,
 
     private async Task SeedDatabase(ApplicationDbContext dbContext)
     {
-        var categories = new List<Category>()
+        if (!await dbContext.Categories.AnyAsync())
         {
-            new Category("firstCategory"),
-            new Category("secondCategory")
-        };
+            var categories = new List<Category>()
+            {
+                new("firstCategory"),
+                new("secondCategory")
+            };
 
-        await dbContext.Categories.AddRangeAsync(categories);
-        await dbContext.SaveChangesAsync();
+            await dbContext.Categories.AddRangeAsync(categories);
+        }
 
-        var users = await dbContext.Users.ToListAsync();
-        var user = users[1];
 
-        var products = new List<Product>()
+        if (await dbContext.Products.AnyAsync())
         {
-            new Product("title", "desc", "loc", "phoneNumber", 69.420, categories[0].Id, user.Id,
-                DeliveryResponsibility.Buyer),
-            new Product("title", "desc", "loc", "phoneNumber", 69.420, categories[0].Id, user.Id,
-                DeliveryResponsibility.Buyer),
-        };
-        await dbContext.Products.AddRangeAsync(products);
+            var users = await dbContext.Users.ToListAsync();
+            var user = users[1];
+            var categories = await dbContext.Categories.ToListAsync();
+
+            var products = new List<Product>()
+            {
+                new("title", "desc", "loc", "phoneNumber", 69.420, categories[0].Id, user.Id,
+                    DeliveryResponsibility.Buyer),
+                new("title", "desc", "loc", "phoneNumber", 69.420, categories[0].Id, user.Id,
+                    DeliveryResponsibility.Buyer),
+            };
+            await dbContext.Products.AddRangeAsync(products);
+        }
+        
         await dbContext.SaveChangesAsync();
     }
     

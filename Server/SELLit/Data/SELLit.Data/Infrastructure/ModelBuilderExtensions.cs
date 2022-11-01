@@ -4,6 +4,9 @@ public static class ModelBuilderExtensions
 {
     public static void ConfigureRelations(this ModelBuilder builder)
     {
+        builder.Entity<Category>()
+            .HasIndex(x => x.Name).IsUnique();
+        
         builder.Entity<Product>()
             .HasOne(x => x.Category)
             .WithMany(x => x.Products)

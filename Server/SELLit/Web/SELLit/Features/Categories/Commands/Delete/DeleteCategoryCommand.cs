@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using AspNetCore.Hashids.Mvc;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
