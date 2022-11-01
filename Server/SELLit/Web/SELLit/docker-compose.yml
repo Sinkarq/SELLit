@@ -1,0 +1,31 @@
+﻿version: '3.8'
+services:
+  sinkarq:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Test@Pass"
+      MSSQL_PID: Express
+    ports:
+      - "1433:1433"
+  seq:
+    image: datalust/seq:latest
+    restart: unless-stopped
+    environment: 
+      ACCEPT_EULA: "Y"
+    ports: 
+      - "5341:80"
+  sellit:
+    build: 
+      context: ../../
+      dockerfile: ./Web/SELLit/Dockerfile
+    depends_on:
+      - sinkarq
+      - seq
+    environment:
+      ServerName: "Sinkarq"
+      Database: "SELLit"
+      UserName: "SA"
+      Password: "Test@Pass"
+    ports:
+      - "80:80"

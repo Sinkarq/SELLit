@@ -1,0 +1,11 @@
+*/bin
+*/obj
+bin/
+obk/
+.env
+.git
+.gitignore
+**/.toolstarget
+.idea/
+.vs/
+.vscode/

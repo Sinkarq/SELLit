@@ -2,6 +2,8 @@ namespace SELLit.Server.Features;
 
 public static class Routes
 {
+    public static string GetIdRoute(string route, string id) => route.Replace("{id:hashids}", id);
+    
     public static class Identity
     {
         private const string Controller = "Identity";
@@ -20,6 +22,9 @@ public static class Routes
         public const string Create = Controller + "/Create";
         public const string Update = Controller + "/Update";
         public const string Delete = Controller + "/Delete/{id:hashids}";
+
+        public static string DeleteById(string id) => GetIdRoute(Delete, id);
+        public static string GetById(string id) => GetIdRoute(Get, id);
     }
 
     public static class Products
@@ -32,5 +37,8 @@ public static class Routes
         public const string Create = Controller + "/Create";
         public const string Update = Controller + "/Update";
         public const string Delete = Controller + "/Delete/{id:hashids}";
+        
+        public static string DeleteById(string id) => GetIdRoute(Delete, id);
+        public static string GetById(string id) => GetIdRoute(Get, id);
     }
 }

@@ -9,8 +9,8 @@ public readonly struct ErrorModel
     [JsonConstructor]
     public ErrorModel(IEnumerable<string> errors, int statusCode)
     {
-        NullGuardMethods.Guard(statusCode);
-        NullGuardMethods.Guard(errors);
+        /*NullGuardMethods.Guard(statusCode);
+        NullGuardMethods.Guard(errors);*/
         Errors = errors;
         StatusCode = statusCode;
     }

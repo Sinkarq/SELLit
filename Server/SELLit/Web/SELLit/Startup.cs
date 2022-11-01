@@ -21,7 +21,6 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        ;
         services
             .AddDbContext<ApplicationDbContext>(
                 options =>
@@ -29,7 +28,7 @@ public class Startup
                     options.UseSqlServer(this.Configuration.GetDefaultConnection(), options =>
                     {
                         options.EnableRetryOnFailure(maxRetryCount: 4, TimeSpan.FromSeconds(1),
-                            errorNumbersToAdd: new int[] { });
+                            errorNumbersToAdd: Array.Empty<int>());
                     });
 
                     if (this.CurrentEnvironment.IsDevelopment())

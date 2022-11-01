@@ -25,6 +25,6 @@ public sealed class IdentityController : ApiController
         var response = await this.Mediator.Send(requestModel);
         return response.Match<IActionResult>(
             loginCommandOutputModel => this.Ok(loginCommandOutputModel),
-            _ => this.BadRequest(new ErrorModel(new[] {"Invalid login credentials"},400)));
+            _ => this.BadRequest("Invalid login credentials."));
     }
 }

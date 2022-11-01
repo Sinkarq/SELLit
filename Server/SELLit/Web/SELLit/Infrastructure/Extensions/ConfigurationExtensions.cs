@@ -5,7 +5,14 @@ namespace SELLit.Server.Infrastructure.Extensions;
 public static class ConfigurationSettings
 {
     public static string GetDefaultConnection(this IConfiguration configuration)
-        => configuration.GetConnectionString("DefaultConnection");
+    {
+        var serverName = configuration["ServerName"];
+        var database = configuration["Database"];
+        var username = configuration["UserName"];
+        var password = configuration["Password"];
+        const string port = "1433";
+        return $"Server={serverName},{port};Initial Catalog={database};User ID={username};Password={password}";
+    }
 
     public static AppSettings GetApplicationSettings(
         this IServiceCollection services, 
