@@ -1,75 +1,67 @@
+using Bogus;
 using SELLit.Server.Features.Categories.Commands.Create;
 using SELLit.Server.Infrastructure;
 
 namespace SELLit.IntegrationTests.CategoriesController;
 
-public class CreateCategoryTests : IntegrationTestBase
+[Collection(nameof(IntegrationTests))]
+public class CreateCategoryTests
 {
     private readonly IntegrationTestFactory<Startup, ApplicationDbContext> Factory;
     private const string CreateCategoryRoute = Routes.Categories.Create;
+    private readonly HttpClient httpClient;
 
-    public CreateCategoryTests(IntegrationTestFactory<Startup, ApplicationDbContext> factory) : base(factory)
+    public CreateCategoryTests(IntegrationTestFactory<Startup, ApplicationDbContext> factory)
     {
         Factory = factory;
+        this.httpClient = factory.HttpClient;
     }
-    
+
     [Fact]
     public async Task Should_Succeed()
     {
-        var httpClient = Factory.CreateClient();
-
-        await AuthenticateAdminAsync(httpClient);
-
-        var responseMessage = await httpClient.PostAsJsonShouldBeWithStatusCodeAsync(CreateCategoryRoute,
-            new CreateCategoryCommand
-            {
-                Name = Guid.NewGuid().ToString()
-            }, HttpStatusCode.Created);
+        var responseMessage = await this.httpClient
+            .WithAdminAuthentication()
+            .PostAsJsonShouldBeWithStatusCodeAsync(CreateCategoryRoute,
+                new CreateCategoryCommand
+                {
+                    Name = new Faker().Person.FirstName
+                }, HttpStatusCode.Created);
 
         var url = responseMessage.Headers.Location.LocalPath;
-        
+
         await httpClient.GetShouldBeWithStatusCodeAsync(url, HttpStatusCode.OK);
     }
 
     [Fact]
-    public async Task Should_Return_Bad_Request_UniqueName_Required()
-    {
-        var httpClient = Factory.CreateClient();
+    public async Task Should_Return_Bad_Request_UniqueName_Required() =>
+        (await this.httpClient
+            .WithAdminAuthentication()
+            .DeserializePostAsJsonShouldBeWithStatusCodeAsync<ErrorModel, CreateCategoryCommand>(CreateCategoryRoute,
+                new CreateCategoryCommand
+                {
+                    Name = Factory.ActiveCategories[0].Name
+                }, HttpStatusCode.BadRequest)).Errors.Should().NotBeEmpty();
 
-        await AuthenticateAdminAsync(httpClient);
-
-        (await httpClient.DeserializePostAsJsonShouldBeWithStatusCodeAsync<ErrorModel, CreateCategoryCommand>(CreateCategoryRoute,
-            new CreateCategoryCommand
-            {
-                Name = "firstCategory"
-            }, HttpStatusCode.BadRequest)).Errors.Should().NotBeEmpty();
-    }
-    
     [Fact]
-    public async Task Should_Return_Unauthorized()
-    {
-        var httpClient = Factory.CreateClient();
+    public async Task Should_Return_Unauthorized() =>
+        await httpClient
+            .WithNoAuthentication()
+            .PostAsJsonShouldBeWithStatusCodeAsync(
+                CreateCategoryRoute,
+                new CreateCategoryCommand
+                {
+                    Name = Factory.ActiveCategories[0].Name
+                }, HttpStatusCode.Unauthorized);
 
-        await httpClient.PostAsJsonShouldBeWithStatusCodeAsync(
-            CreateCategoryRoute,
-            new CreateCategoryCommand
-            {
-                Name = "firstCategory"
-            }, HttpStatusCode.Unauthorized);
-    }
-    
     [Fact]
-    public async Task Should_Return_Forbidden()
-    {
-        var httpClient = Factory.CreateClient();
-
-        await AuthenticateAsync(httpClient);
-
-        await httpClient.PostAsJsonShouldBeWithStatusCodeAsync(
-            CreateCategoryRoute,
-            new CreateCategoryCommand
-            {
-                Name = "firstCategory"
-            }, HttpStatusCode.Forbidden);
-    }
+    public async Task Should_Return_Forbidden() =>
+        await httpClient
+            .WithDefaultAuthentication()
+            .PostAsJsonShouldBeWithStatusCodeAsync(
+                CreateCategoryRoute,
+                new CreateCategoryCommand
+                {
+                    Name = Factory.ActiveCategories[0].Name
+                }, HttpStatusCode.Forbidden);
 }

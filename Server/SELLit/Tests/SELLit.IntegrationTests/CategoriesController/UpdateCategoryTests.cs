@@ -1,103 +1,105 @@
-using Microsoft.Extensions.DependencyInjection;
+using Bogus;
+using SELLit.Server.Features.Categories.Commands.Create;
 using SELLit.Server.Infrastructure;
+using IHashids = HashidsNet.IHashids;
 
 namespace SELLit.IntegrationTests.CategoriesController;
 
-public class UpdateCategoryTests : IntegrationTestBase
+[Collection(nameof(IntegrationTests))]
+public class UpdateCategoryTests
 {
     private readonly IntegrationTestFactory<Startup, ApplicationDbContext> Factory;
+    private readonly IHashids hashids;
+    private readonly HttpClient httpClient;
     private const string UpdateCategoryRoute = Routes.Categories.Update;
 
-    public UpdateCategoryTests(IntegrationTestFactory<Startup, ApplicationDbContext> factory) : base(factory)
+    public UpdateCategoryTests(IntegrationTestFactory<Startup, ApplicationDbContext> factory)
     {
         Factory = factory;
+        this.httpClient = factory.HttpClient;
+        this.hashids = factory.Hashids;
     }
 
     [Fact]
     public async Task Should_Succeed()
     {
-        var httpClient = Factory.CreateClient();
-        var hashids = this.ServiceProvider.GetService<IHashids>();
-        var id = hashids.Encode(1);
-        var name = Guid.NewGuid().ToString();
-        
-        await AuthenticateAdminAsync(httpClient);
-        
-        await httpClient.PutAsJsonShouldBeWithStatusCodeAsync(UpdateCategoryRoute,
-            new UpdateCategoryTestCommand()
-            {
-                Id = 1,
-                Name = name
-            }, HttpStatusCode.OK);
+        var id = this.hashids.Encode(2);
+        var name = new Faker().Person.FirstName;
 
-        (await httpClient.DeserializeGetShouldBeWithStatusCodeAsync<GetCategoryQueryTestResponseModel>(
-            Routes.Categories.GetById(id), HttpStatusCode.OK)).Name.Should().Be(name);
-    }   
-    
+        await httpClient
+            .WithAdminAuthentication()
+            .PutAsJsonShouldBeWithStatusCodeAsync(UpdateCategoryRoute,
+                new UpdateCategoryTestCommand()
+                {
+                    Id = 2,
+                    Name = name
+                }, HttpStatusCode.OK);
+
+        (await httpClient
+            .WithNoAuthentication()
+            .DeserializeGetShouldBeWithStatusCodeAsync<GetCategoryQueryTestResponseModel>(
+                Routes.Categories.GetById(id),
+                HttpStatusCode.OK)).Name.Should().Be(name);
+    }
+
     [Fact]
-    public async Task Should_Return_NotFound()
-    {
-        var httpClient = Factory.CreateClient();
-        var name = Guid.NewGuid().ToString();
-        
-        await AuthenticateAdminAsync(httpClient);
-        
-        await httpClient.PutAsJsonShouldBeWithStatusCodeAsync(UpdateCategoryRoute,
-            new UpdateCategoryTestCommand()
-            {
-                Id = 69,
-                Name = name
-            }, HttpStatusCode.NotFound);
-    }   
-    
+    public async Task Should_Return_NotFound() =>
+        await httpClient
+            .WithAdminAuthentication()
+            .PutAsJsonShouldBeWithStatusCodeAsync(UpdateCategoryRoute,
+                new UpdateCategoryTestCommand()
+                {
+                    Id = 69,
+                    Name = new Faker().Person.FirstName
+                }, HttpStatusCode.NotFound);
+
     [Fact]
-    public async Task Should_Return_Unauthorized()
-    {
-        var httpClient = Factory.CreateClient();
-        var name = Guid.NewGuid().ToString();
+    public async Task Should_Return_Unauthorized() =>
+        await httpClient
+            .WithNoAuthentication()
+            .PutAsJsonShouldBeWithStatusCodeAsync(UpdateCategoryRoute,
+                new UpdateCategoryTestCommand()
+                {
+                    Id = 1,
+                    Name = new Faker().Person.FirstName
+                }, HttpStatusCode.Unauthorized);
 
-        await httpClient.PutAsJsonShouldBeWithStatusCodeAsync(UpdateCategoryRoute,
-            new UpdateCategoryTestCommand()
-            {
-                Id = 1,
-                Name = name
-            }, HttpStatusCode.Unauthorized);
-    }   
-    
     [Fact]
-    public async Task Should_Return_Forbidden()
-    {
-        var httpClient = Factory.CreateClient();
+    public async Task Should_Return_Forbidden() =>
+        await httpClient
+            .WithDefaultAuthentication()
+            .PutAsJsonShouldBeWithStatusCodeAsync(UpdateCategoryRoute,
+                new UpdateCategoryTestCommand()
+                {
+                    Id = 1,
+                    Name = new Faker().Person.FirstName
+                }, HttpStatusCode.Forbidden);
 
-        await AuthenticateAsync(httpClient);
-        
-        var name = Guid.NewGuid().ToString();
-
-        await httpClient.PutAsJsonShouldBeWithStatusCodeAsync(UpdateCategoryRoute,
-            new UpdateCategoryTestCommand()
-            {
-                Id = 1,
-                Name = name
-            }, HttpStatusCode.Forbidden);
-    }   
-    
     [Fact]
     public async Task Should_Return_Bad_Request_UniqueName_Required()
     {
-        var httpClient = Factory.CreateClient();
-        
-        await AuthenticateAdminAsync(httpClient);
+        var name = new Faker().Person.FirstName;
 
-        (await httpClient.DeserializePutAsJsonShouldBeWithStatusCodeAsync<ErrorModel, UpdateCategoryTestCommand>(UpdateCategoryRoute,
-            new UpdateCategoryTestCommand
+        await httpClient.WithAdminAuthentication().PostAsJsonShouldBeWithStatusCodeAsync(Routes.Categories.Create,
+            new CreateCategoryCommand
             {
-                Id = 2,
-                Name = "secondCategory"
-            }, HttpStatusCode.BadRequest)).Errors.Should().NotBeNull().And.NotContainNulls();
+                Name = name
+            }, HttpStatusCode.Created);
+        
+        await httpClient
+            .WithAdminAuthentication()
+            .DeserializePutAsJsonShouldBeWithStatusCodeAsync<ErrorModel, UpdateCategoryTestCommand>(
+                UpdateCategoryRoute,
+                new UpdateCategoryTestCommand
+                {
+                    Id = Factory.ActiveCategories[0].Id,
+                    Name = name
+                }, HttpStatusCode.BadRequest);
     }
 }
 
-public sealed class UpdateCategoryTestCommand {
+public sealed class UpdateCategoryTestCommand
+{
     public int Id { get; set; }
     public string Name { get; set; }
 }

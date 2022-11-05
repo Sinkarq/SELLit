@@ -76,7 +76,7 @@ public static class ServiceCollectionExtensions
                 x.Salt = "Sinkarq";
             })
             .AddTransient<IIdentityService, IdentityService>()
-            .AddSingleton<ICurrentUser, CurrentUser>();
+            .AddScoped<ICurrentUser, CurrentUser>();
 
     public static IServiceCollection AddSwagger(this IServiceCollection services)
         => services.AddSwaggerGen(c =>

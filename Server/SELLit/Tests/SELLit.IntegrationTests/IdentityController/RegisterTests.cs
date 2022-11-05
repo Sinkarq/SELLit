@@ -4,35 +4,35 @@ using SELLit.Server.Infrastructure;
 
 namespace SELLit.IntegrationTests.IdentityController;
 
-public class RegisterTests : IntegrationTestBase
+[Collection(nameof(IntegrationTests))]
+public class RegisterTests
 {
     private readonly IntegrationTestFactory<Startup, ApplicationDbContext> Factory;
+    private readonly HttpClient httpClient;
     private const string RegisterRoute = Routes.Identity.Register;
 
-    public RegisterTests(IntegrationTestFactory<Startup, ApplicationDbContext> factory) : base(factory)
+    public RegisterTests(IntegrationTestFactory<Startup, ApplicationDbContext> factory)
     {
         Factory = factory;
+        this.httpClient = factory.HttpClient;
     }
-    
+
     [Fact]
-    public async Task Register_Should_Return_200()
-    {
-        var httpClient = this.Factory.CreateClient();
-        await httpClient.PostAsJsonShouldBeWithStatusCodeAsync(RegisterRoute, new RegisterCommand
-        {
-            FirstName = "Sinan",
-            LastName = "Abdulgafurov",
-            Username = "Sinkarcheto123",
-            Password = "password1234",
-            Email = "sinkarq1234565@gmail.com"
-        }, HttpStatusCode.OK);
-    }
-    
+    public async Task Register_Should_Return_200() =>
+        await this.httpClient
+            .WithNoAuthentication()
+            .PostAsJsonShouldBeWithStatusCodeAsync(RegisterRoute, new RegisterCommand
+            {
+                FirstName = "Sinan",
+                LastName = "Abdulgafurov",
+                Username = "Sinkarcheto123",
+                Password = "password1234",
+                Email = "sinkarq1234565@gmail.com"
+            }, HttpStatusCode.OK);
+
     [Fact]
     public async Task Register_Should_Return_NotAvailable_Username_and_Email()
     {
-        var httpClient = Factory.CreateClient();
-        
         await httpClient.PostAsJsonAsync(RegisterRoute, new RegisterCommand
         {
             FirstName = "Sinan",
@@ -42,7 +42,9 @@ public class RegisterTests : IntegrationTestBase
             Email = "sinkarq123@gmail.com"
         });
 
-        (await httpClient.DeserializePostAsJsonShouldBeWithStatusCodeAsync<ErrorModel, RegisterCommand>(
+        (await httpClient
+            .WithNoAuthentication()
+            .DeserializePostAsJsonShouldBeWithStatusCodeAsync<ErrorModel, RegisterCommand>(
             Routes.Identity.Register, new RegisterCommand
             {
                 FirstName = "Sinan",

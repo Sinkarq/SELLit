@@ -1,30 +1,32 @@
 namespace SELLit.IntegrationTests.CategoriesController;
 
-public class GetAllCategoriesTests : IntegrationTestBase
+[Collection(nameof(IntegrationTests))]
+public class GetAllCategoriesTests
 {
     private readonly IntegrationTestFactory<Startup, ApplicationDbContext> Factory;
+    private readonly HttpClient httpClient;
     private const string GetAllRoute = Routes.Categories.GetAll;
 
-    public GetAllCategoriesTests(IntegrationTestFactory<Startup, ApplicationDbContext> factory) : base(factory)
+    public GetAllCategoriesTests(IntegrationTestFactory<Startup, ApplicationDbContext> factory)
     {
         Factory = factory;
+        this.httpClient = factory.HttpClient; 
     }
 
     [Fact]
-    public async Task GetAll_Returns_Two_Categories()
-    {
-        var httpClient = Factory.CreateClient();
-
-        (await httpClient.DeserializeGetShouldBeWithStatusCodeAsync<List<GetAllCategoriesQueryTestResponseModel>>(
-            GetAllRoute, HttpStatusCode.OK))
-            .Should().NotContainNulls()
-            .And.HaveCount(2);
-    }
+    public async Task GetAll_Returns_Two_Categories() =>
+        (await httpClient
+            .WithNoAuthentication()
+            .DeserializeGetShouldBeWithStatusCodeAsync<List<GetAllCategoriesQueryTestResponseModel>>(
+                GetAllRoute,
+                HttpStatusCode.OK))
+        .Should().NotContainNulls()
+        .And.HaveCountGreaterThan(0);
 }
 
 internal sealed class GetAllCategoriesQueryTestResponseModel
 {
     public string Id { get; set; }
-    
+
     public string Name { get; set; }
 }

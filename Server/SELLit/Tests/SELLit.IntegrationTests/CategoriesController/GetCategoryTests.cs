@@ -1,41 +1,38 @@
-using Microsoft.Extensions.DependencyInjection;
-
 namespace SELLit.IntegrationTests.CategoriesController;
 
-public class GetCategoryTests : IntegrationTestBase
+[Collection(nameof(IntegrationTests))]
+public class GetCategoryTests
 {
     private readonly IntegrationTestFactory<Startup, ApplicationDbContext> Factory;
+    private readonly IHashids hashids;
+    private readonly HttpClient httpClient;
 
-    public GetCategoryTests(IntegrationTestFactory<Startup, ApplicationDbContext> factory) : base(factory)
+    public GetCategoryTests(IntegrationTestFactory<Startup, ApplicationDbContext> factory)
     {
         Factory = factory;
+        this.httpClient = factory.HttpClient;
+        this.hashids = factory.Hashids;
     }
 
     [Fact]
     public async Task GetCategory_Returns_OK()
     {
-        var httpClient = Factory.CreateClient();
+        var id = this.hashids.Encode(2);
 
-        var hashids = this.ServiceProvider.GetService<IHashids>();
-        var id = hashids?.Encode(1);
-
-
-        (await httpClient.DeserializeGetShouldBeWithStatusCodeAsync<GetCategoryQueryTestResponseModel>(
-            Routes.Categories.GetById(id), HttpStatusCode.OK)).Id.Should().Be(id);
+        (await httpClient
+            .WithNoAuthentication()
+            .DeserializeGetShouldBeWithStatusCodeAsync<GetCategoryQueryTestResponseModel>(
+                Routes.Categories.GetById(id),
+                HttpStatusCode.OK)).Id.Should().Be(id);
     }
-    
+
     [Fact]
-    public async Task GetCategory_Returns_NotFound()
-    {
-        var httpClient = Factory.CreateClient();
-
-        var hashids = this.ServiceProvider.GetService<IHashids>();
-        var id = hashids?.Encode(69);
-
-
-        await httpClient.DeserializeGetShouldBeWithStatusCodeAsync<GetCategoryQueryTestResponseModel>(
-            Routes.Categories.GetById(id), HttpStatusCode.NotFound);
-    }
+    public async Task GetCategory_Returns_NotFound() =>
+        await httpClient
+            .WithNoAuthentication()
+            .DeserializeGetShouldBeWithStatusCodeAsync<GetCategoryQueryTestResponseModel>(
+                Routes.Categories.GetById(this.hashids.Encode(69)),
+                HttpStatusCode.NotFound);
 }
 
 public class GetCategoryQueryTestResponseModel

@@ -1,65 +1,52 @@
-using Microsoft.Extensions.DependencyInjection;
-
 namespace SELLit.IntegrationTests.CategoriesController;
 
-public class DeleteCategoryTests : IntegrationTestBase
+[Collection(nameof(IntegrationTests))]
+public class DeleteCategoryTests
 {
     private readonly IntegrationTestFactory<Startup, ApplicationDbContext> Factory;
+    private readonly IHashids hashids;
+    private readonly HttpClient httpClient;
 
-    public DeleteCategoryTests(IntegrationTestFactory<Startup, ApplicationDbContext> factory) : base(factory)
+    public DeleteCategoryTests(IntegrationTestFactory<Startup, ApplicationDbContext> factory)
     {
         Factory = factory;
+        this.httpClient = factory.HttpClient;
+        this.hashids = factory.Hashids;
     }
 
     [Fact]
     public async Task Should_Delete_And_Return_OK()
     {
-        var httpClient = Factory.CreateClient();
+        var id = this.hashids.Encode(Factory.ActiveCategories[0].Id);
 
-        await AuthenticateAdminAsync(httpClient);
-
-        var hashids = this.ServiceProvider.GetService<IHashids>();
-        var id = hashids?.Encode(1);
-
-        await httpClient.DeleteShouldBeWithStatusCodeAsync(Routes.Categories.DeleteById(id), HttpStatusCode.OK);
+        await httpClient
+            .WithAdminAuthentication()
+            .DeleteShouldBeWithStatusCodeAsync(Routes.Categories.DeleteById(id), HttpStatusCode.OK);
 
         await httpClient.GetShouldBeWithStatusCodeAsync(Routes.Categories.GetById(id), HttpStatusCode.NotFound);
     }
-    
+
     [Fact]
-    public async Task Should_Return_NotFound()
-    {
-        var httpClient = Factory.CreateClient();
+    public async Task Should_Return_NotFound() =>
+        await httpClient
+            .WithAdminAuthentication()
+            .DeleteShouldBeWithStatusCodeAsync(
+                Routes.Categories.DeleteById(hashids.Encode(69)),
+                HttpStatusCode.NotFound);
 
-        await AuthenticateAdminAsync(httpClient);
-
-        var hashids = this.ServiceProvider.GetService<IHashids>();
-        var id = hashids?.Encode(69);
-
-        await httpClient.DeleteShouldBeWithStatusCodeAsync(Routes.Categories.DeleteById(id), HttpStatusCode.NotFound);
-    }
-    
     [Fact]
-    public async Task Should_Return_Unauthorized_When_Not_LoggedIn()
-    {
-        var httpClient = Factory.CreateClient();
+    public async Task Should_Return_Unauthorized_When_Not_LoggedIn() =>
+        await httpClient
+            .WithNoAuthentication()
+            .DeleteShouldBeWithStatusCodeAsync(
+                Routes.Categories.DeleteById(this.hashids.Encode(69)),
+                HttpStatusCode.Unauthorized);
 
-        var hashids = this.ServiceProvider.GetService<IHashids>();
-        var id = hashids?.Encode(1);
-
-        await httpClient.DeleteShouldBeWithStatusCodeAsync(Routes.Categories.DeleteById(id), HttpStatusCode.Unauthorized);
-    }
-    
     [Fact]
-    public async Task Should_Return_Forbidden()
-    {
-        var httpClient = Factory.CreateClient();
-
-        await AuthenticateAsync(httpClient);
-
-        var hashids = this.ServiceProvider.GetService<IHashids>();
-        var id = hashids?.Encode(1);
-
-        await httpClient.DeleteShouldBeWithStatusCodeAsync(Routes.Categories.DeleteById(id), HttpStatusCode.Forbidden);
-    }
+    public async Task Should_Return_Forbidden() =>
+        await httpClient
+            .WithDefaultAuthentication()
+            .DeleteShouldBeWithStatusCodeAsync(
+                Routes.Categories.DeleteById(this.hashids.Encode(69)),
+                HttpStatusCode.Forbidden);
 }

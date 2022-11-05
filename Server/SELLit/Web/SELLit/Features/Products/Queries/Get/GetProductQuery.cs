@@ -2,6 +2,7 @@ using AspNetCore.Hashids.Mvc;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OneOf;
 using OneOf.Types;
 using SELLit.Data.Common.Repositories;
@@ -13,7 +14,8 @@ public sealed class GetProductQuery : IRequest<OneOf<GetProductQueryResponseMode
     [ModelBinder(typeof(HashidsModelBinder))]
     public int Id { get; set; }
 
-    public sealed class GetProductQueryHandler : IRequestHandler<GetProductQuery, OneOf<GetProductQueryResponseModel, NotFound>>
+    public sealed class
+        GetProductQueryHandler : IRequestHandler<GetProductQuery, OneOf<GetProductQueryResponseModel, NotFound>>
     {
         private readonly IDeletableEntityRepository<Product> productRepository;
         private readonly IMapper mapper;
@@ -24,16 +26,29 @@ public sealed class GetProductQuery : IRequest<OneOf<GetProductQueryResponseMode
             this.mapper = mapper;
         }
 
-        public async Task<OneOf<GetProductQueryResponseModel, NotFound>> Handle(GetProductQuery request, CancellationToken cancellationToken)
+        public async Task<OneOf<GetProductQueryResponseModel, NotFound>> Handle(GetProductQuery request,
+            CancellationToken cancellationToken)
         {
-            var entity = await this.productRepository.Collection().FindAsync(request.Id);
+            var entity = await this.productRepository
+                .AllAsNoTracking()
+                .Where(x => x.Id == request.Id).Select(x => new GetProductQueryResponseModel
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Description = x.Description,
+                    Location = x.Location,
+                    PhoneNumber = x.PhoneNumber,
+                    Price = x.Price,
+                    DeliveryResponsibility = x.DeliveryResponsibility,
+                    CategoryName = x.Category.Name
+                }).FirstOrDefaultAsync(cancellationToken);
 
             if (entity is null)
             {
                 return new NotFound();
             }
 
-            return this.mapper.Map<GetProductQueryResponseModel>(entity);
+            return entity;
         }
     }
 }

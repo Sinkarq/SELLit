@@ -23,7 +23,7 @@ public class ProductsController : ApiController
         [FromRoute] 
         GetProductQuery query) 
         => (await this.Mediator.Send(query)).Match<IActionResult>(
-            _ => this.Ok(_),
+            product => this.Ok(product),
             _ => this.NotFound());
 
     [HttpGet]
@@ -41,8 +41,7 @@ public class ProductsController : ApiController
         var response = await this.Mediator.Send(command);
 
         var id = this.hashids.Encode(response.Id);
-        
-        //TODO: Redirect location
+
         return this.CreatedAtAction("GetProduct", new {id}, new {});
     }
 
@@ -57,7 +56,7 @@ public class ProductsController : ApiController
         return response.Match<IActionResult>(
             _ => this.Ok(), 
             _=> this.NotFound(), 
-            _ => this.Unauthorized());
+            _ => this.Forbid());
     }
 
     [HttpDelete]
@@ -68,5 +67,7 @@ public class ProductsController : ApiController
         => (await this.Mediator.Send(command)).Match<IActionResult>(
             _ => this.Ok(), 
             _ => this.NotFound(),
-            _ => this.Unauthorized());
+            _ => this.Forbid());
+    
+    // TODO: Forbid Struct result
 }
