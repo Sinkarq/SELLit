@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using FluentValidation;
 using SELLit.Common;
 
@@ -10,6 +11,7 @@ public sealed class CreateCategoryCommandValidator : AbstractValidator<CreateCat
         RuleFor(x => x.Name)
             .NotNull()
             .NotEmpty()
+            .Matches(@"^[A-Za-z\s,]*$")
             .WithMessage(ValidationConstants.ValidationMessage);
     }
 }

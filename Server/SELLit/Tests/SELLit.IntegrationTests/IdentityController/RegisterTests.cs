@@ -18,7 +18,7 @@ public class RegisterTests
     }
 
     [Fact]
-    public async Task Register_Should_Return_200() =>
+    public async Task Register_Should_Return_204() =>
         await this.httpClient
             .WithNoAuthentication()
             .PostAsJsonShouldBeWithStatusCodeAsync(RegisterRoute, new RegisterCommand
@@ -28,7 +28,7 @@ public class RegisterTests
                 Username = "Sinkarcheto123",
                 Password = "password1234",
                 Email = "sinkarq1234565@gmail.com"
-            }, HttpStatusCode.OK);
+            }, HttpStatusCode.NoContent);
 
     [Fact]
     public async Task Register_Should_Return_NotAvailable_Username_and_Email()

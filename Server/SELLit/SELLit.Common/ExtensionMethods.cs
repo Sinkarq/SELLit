@@ -1,4 +1,4 @@
-﻿namespace SELLit.Server.Infrastructure.Extensions;
+namespace SELLit.Common;
 
 public static class ExtensionMethods
 {

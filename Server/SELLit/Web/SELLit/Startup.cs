@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using SELLit.Data;
 using SELLit.Server.Infrastructure.Extensions;
 using SELLit.Server.Infrastructure.Filters;
+using SELLit.Server.Infrastructure.SwaggerConfiguration;
 
 namespace SELLit.Server;
 
@@ -55,6 +56,7 @@ public class Startup
                 options =>
                 {
                     options.Filters.Add<ModelOrNotFoundActionFilter>();
+                    options.Filters.Add<ValidationFilter>();
                 });
     }
 

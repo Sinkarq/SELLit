@@ -29,13 +29,13 @@ public sealed class CreateCategoryCommand : IRequest<OneOf<CreateCategoryCommand
             
             var category = new Category(request.Name);
             await this.categoryRepository.AddAsync(category, cancellationToken);
-            
             await this.categoryRepository.SaveChangesAsync(cancellationToken);
 
 
             return new CreateCategoryCommandResponseModel
             {
-                Id = category.Id
+                Id = category.Id,
+                Name = category.Name
             };
         }
     }

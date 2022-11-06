@@ -46,12 +46,9 @@ public sealed class CreateProductCommand : IRequest<CreateProductCommandResponse
             product.UserId = this.currentUser.UserId;
 
             await this.productRepository.AddAsync(product, cancellationToken);
-            await this.productRepository.SaveChangesAsync(cancellationToken);
+            var entitiesWritten = await this.productRepository.SaveChangesAsync(cancellationToken);
 
-            return new CreateProductCommandResponseModel
-            {
-                Id = product.Id
-            };
+            return entitiesWritten == 0 ? null : this.mapper.Map<CreateProductCommandResponseModel>(product);
         }
     }
 }

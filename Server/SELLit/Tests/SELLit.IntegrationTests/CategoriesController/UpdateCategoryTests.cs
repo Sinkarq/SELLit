@@ -87,7 +87,7 @@ public class UpdateCategoryTests
         
         await httpClient
             .WithAdminAuthentication()
-            .DeserializePutAsJsonShouldBeWithStatusCodeAsync<ErrorModel, UpdateCategoryTestCommand>(
+            .DeserializePutAsJsonShouldBeWithStatusCodeAsync<ErrorResponse, UpdateCategoryTestCommand>(
                 UpdateCategoryRoute,
                 new UpdateCategoryTestCommand
                 {

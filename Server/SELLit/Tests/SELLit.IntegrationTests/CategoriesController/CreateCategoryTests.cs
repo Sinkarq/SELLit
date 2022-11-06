@@ -1,3 +1,4 @@
+using SELLit.Common;
 using SELLit.Server.Features.Categories.Commands.Create;
 using SELLit.Server.Infrastructure;
 
@@ -19,15 +20,19 @@ public class CreateCategoryTests
     [Fact]
     public async Task Should_Succeed()
     {
+        var name = new Faker().Person.FirstName;
         var responseMessage = await this.httpClient
             .WithAdminAuthentication()
             .PostAsJsonShouldBeWithStatusCodeAsync(CreateCategoryRoute,
                 new CreateCategoryCommand
                 {
-                    Name = new Faker().Person.FirstName
+                    Name = name
                 }, HttpStatusCode.Created);
 
         var url = responseMessage.Headers.Location.LocalPath;
+        var category = await responseMessage.DeserializeHttpContentAsync<CreateCategoryCommandResponseModel>();
+        category.Id.Should().NotBeNullOrEmpty();
+        category.Name.Should().Be(name);
 
         await httpClient.GetShouldBeWithStatusCodeAsync(url, HttpStatusCode.OK);
     }
@@ -36,7 +41,7 @@ public class CreateCategoryTests
     public async Task Should_Return_Bad_Request_UniqueName_Required() =>
         (await this.httpClient
             .WithAdminAuthentication()
-            .DeserializePostAsJsonShouldBeWithStatusCodeAsync<ErrorModel, CreateCategoryCommand>(CreateCategoryRoute,
+            .DeserializePostAsJsonShouldBeWithStatusCodeAsync<ErrorResponse, CreateCategoryCommand>(CreateCategoryRoute,
                 new CreateCategoryCommand
                 {
                     Name = Factory.ActiveCategories[0].Name
@@ -63,4 +68,11 @@ public class CreateCategoryTests
                 {
                     Name = Factory.ActiveCategories[0].Name
                 }, HttpStatusCode.Forbidden);
+}
+
+internal sealed class CreateCategoryCommandResponseModel
+{
+    public string Id { get; set; }
+    
+    public string Name { get; set; }
 }

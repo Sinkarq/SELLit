@@ -23,7 +23,7 @@ public class DeleteCategoryTests
 
         await httpClient
             .WithAdminAuthentication()
-            .DeleteShouldBeWithStatusCodeAsync(Routes.Categories.DeleteById(id), HttpStatusCode.OK);
+            .DeleteShouldBeWithStatusCodeAsync(Routes.Categories.DeleteById(id), HttpStatusCode.NoContent);
 
         await httpClient.GetShouldBeWithStatusCodeAsync(Routes.Categories.GetById(id), HttpStatusCode.NotFound);
     }

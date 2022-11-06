@@ -22,6 +22,7 @@ public sealed class DeleteCategoryCommand : IRequest<OneOf<DeleteCategoryCommand
         public async Task<OneOf<DeleteCategoryCommandResponseModel, NotFound>> Handle(
             DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
+            // TODO: Test query and delete entity with only ID
             var category = await this.categoryRepository
                 .Collection().FindAsync(request.Id);
 

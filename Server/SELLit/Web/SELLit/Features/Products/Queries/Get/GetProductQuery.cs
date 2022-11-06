@@ -9,13 +9,13 @@ using SELLit.Data.Common.Repositories;
 
 namespace SELLit.Server.Features.Products.Queries.Get;
 
-public sealed class GetProductQuery : IRequest<OneOf<GetProductQueryResponseModel, NotFound>>
+public sealed class GetProductQuery : IRequest<GetProductQueryResponseModel>
 {
     [ModelBinder(typeof(HashidsModelBinder))]
     public int Id { get; set; }
 
     public sealed class
-        GetProductQueryHandler : IRequestHandler<GetProductQuery, OneOf<GetProductQueryResponseModel, NotFound>>
+        GetProductQueryHandler : IRequestHandler<GetProductQuery, GetProductQueryResponseModel>
     {
         private readonly IDeletableEntityRepository<Product> productRepository;
         private readonly IMapper mapper;
@@ -26,12 +26,13 @@ public sealed class GetProductQuery : IRequest<OneOf<GetProductQueryResponseMode
             this.mapper = mapper;
         }
 
-        public async Task<OneOf<GetProductQueryResponseModel, NotFound>> Handle(GetProductQuery request,
+        public async Task<GetProductQueryResponseModel> Handle(GetProductQuery request,
             CancellationToken cancellationToken)
         {
             var entity = await this.productRepository
                 .AllAsNoTracking()
-                .Where(x => x.Id == request.Id).Select(x => new GetProductQueryResponseModel
+                .Where(x => x.Id == request.Id)
+                .Select(x => new GetProductQueryResponseModel
                 {
                     Id = x.Id,
                     Title = x.Title,
@@ -42,11 +43,6 @@ public sealed class GetProductQuery : IRequest<OneOf<GetProductQueryResponseMode
                     DeliveryResponsibility = x.DeliveryResponsibility,
                     CategoryName = x.Category.Name
                 }).FirstOrDefaultAsync(cancellationToken);
-
-            if (entity is null)
-            {
-                return new NotFound();
-            }
 
             return entity;
         }

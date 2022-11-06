@@ -66,7 +66,7 @@ public sealed class UpdateProductCommand : IRequest<OneOf<UpdateProductCommandRe
             this.productRepository.Update(product);
             await this.productRepository.SaveChangesAsync(cancellationToken);
 
-            return new UpdateProductCommandResponseModel();
+            return this.mapper.Map<UpdateProductCommandResponseModel>(product);
         }
     }
 }

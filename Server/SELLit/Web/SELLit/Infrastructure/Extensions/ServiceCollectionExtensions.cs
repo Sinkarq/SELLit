@@ -78,15 +78,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<IIdentityService, IdentityService>()
             .AddScoped<ICurrentUser, CurrentUser>();
 
-    public static IServiceCollection AddSwagger(this IServiceCollection services)
-        => services.AddSwaggerGen(c =>
-        {
-            c.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Title = "SELLit API",
-                Version = "v1"
-            });
-        });
+    
 
     public static IServiceCollection AddAutoMapper(this IServiceCollection services)
     {
