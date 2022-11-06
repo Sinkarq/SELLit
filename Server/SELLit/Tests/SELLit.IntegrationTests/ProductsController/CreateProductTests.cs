@@ -1,6 +1,4 @@
-using Bogus;
 using SELLit.Data.Models;
-using SELLit.Server.Features.Products.Commands.Create;
 
 namespace SELLit.IntegrationTests.ProductsController;
 

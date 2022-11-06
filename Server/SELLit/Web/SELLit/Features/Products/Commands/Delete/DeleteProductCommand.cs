@@ -8,13 +8,13 @@ using SELLit.Server.Services.Interfaces;
 
 namespace SELLit.Server.Features.Products.Commands.Delete;
 
-public sealed class DeleteProductCommand : IRequest<OneOf<DeleteProductCommandResponseModel, NotFound, Unauthorized>>
+public sealed class DeleteProductCommand : IRequest<OneOf<DeleteProductCommandResponseModel, NotFound, Forbidden>>
 {
     [ModelBinder(typeof(HashidsModelBinder))]
     public int Id { get; set; }
 
     public sealed class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand,
-        OneOf<DeleteProductCommandResponseModel, NotFound, Unauthorized>>
+        OneOf<DeleteProductCommandResponseModel, NotFound, Forbidden>>
     {
         private readonly IDeletableEntityRepository<Product> productRepository;
         private readonly ICurrentUser currentUser;
@@ -25,7 +25,7 @@ public sealed class DeleteProductCommand : IRequest<OneOf<DeleteProductCommandRe
             this.currentUser = currentUser;
         }
 
-        public async Task<OneOf<DeleteProductCommandResponseModel, NotFound, Unauthorized>> Handle(
+        public async Task<OneOf<DeleteProductCommandResponseModel, NotFound, Forbidden>> Handle(
             DeleteProductCommand request, CancellationToken cancellationToken)
         {
             var entity = await this.productRepository
@@ -39,7 +39,7 @@ public sealed class DeleteProductCommand : IRequest<OneOf<DeleteProductCommandRe
 
             if (entity.UserId != currentUser.UserId)
             {
-                return new Unauthorized();
+                return new Forbidden();
             }
 
             this.productRepository.Delete(entity);

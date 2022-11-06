@@ -1,4 +1,3 @@
-using Bogus;
 using SELLit.Server.Features.Categories.Commands.Create;
 using SELLit.Server.Infrastructure;
 

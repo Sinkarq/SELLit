@@ -1,5 +1,3 @@
-using SELLit.Server.Features.Products.Queries.GetAll;
-
 namespace SELLit.IntegrationTests.ProductsController;
 
 [Collection(nameof(IntegrationTests))]
@@ -33,7 +31,7 @@ public class GetAllProductTests
 
 public class GetAllProductsQueryTestResponseModel
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = default!;
 
-    public string Title { get; set; }
+    public string Title { get; set; } = default!;
 }

@@ -1,3 +1,5 @@
+using IHashids = HashidsNet.IHashids;
+
 namespace SELLit.IntegrationTests.CategoriesController;
 
 [Collection(nameof(IntegrationTests))]

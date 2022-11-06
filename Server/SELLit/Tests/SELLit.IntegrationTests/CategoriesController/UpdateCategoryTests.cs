@@ -1,4 +1,3 @@
-using Bogus;
 using SELLit.Server.Features.Categories.Commands.Create;
 using SELLit.Server.Infrastructure;
 using IHashids = HashidsNet.IHashids;
@@ -100,6 +99,6 @@ public class UpdateCategoryTests
 
 public sealed class UpdateCategoryTestCommand
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
+    public int Id { get; set; } = default!;
+    public string Name { get; set; } = default!;
 }

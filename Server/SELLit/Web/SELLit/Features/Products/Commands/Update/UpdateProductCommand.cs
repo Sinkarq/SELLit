@@ -8,7 +8,7 @@ using SELLit.Server.Services.Interfaces;
 
 namespace SELLit.Server.Features.Products.Commands.Update;
 
-public sealed class UpdateProductCommand : IRequest<OneOf<UpdateProductCommandResponseModel, NotFound, Unauthorized>>
+public sealed class UpdateProductCommand : IRequest<OneOf<UpdateProductCommandResponseModel, NotFound, Forbidden>>
 {
     [JsonConverter(typeof(HashidsJsonConverter))]
     public int Id { get; set; }
@@ -26,7 +26,7 @@ public sealed class UpdateProductCommand : IRequest<OneOf<UpdateProductCommandRe
     public DeliveryResponsibility DeliveryResponsibility { get; set; }
     
     public sealed class UpdateProductCommandHandler : 
-        IRequestHandler<UpdateProductCommand, OneOf<UpdateProductCommandResponseModel, NotFound, Unauthorized>>
+        IRequestHandler<UpdateProductCommand, OneOf<UpdateProductCommandResponseModel, NotFound, Forbidden>>
     {
         private readonly IDeletableEntityRepository<Product> productRepository;
         private readonly IMapper mapper;
@@ -39,7 +39,7 @@ public sealed class UpdateProductCommand : IRequest<OneOf<UpdateProductCommandRe
             this.currentUser = currentUser;
         }
 
-        public async Task<OneOf<UpdateProductCommandResponseModel, NotFound, Unauthorized>> Handle(
+        public async Task<OneOf<UpdateProductCommandResponseModel, NotFound, Forbidden>> Handle(
             UpdateProductCommand request, CancellationToken cancellationToken)
         {
             var product = await this.productRepository.Collection().FindAsync(request.Id);
@@ -51,7 +51,7 @@ public sealed class UpdateProductCommand : IRequest<OneOf<UpdateProductCommandRe
 
             if (product.UserId != this.currentUser.UserId)
             {
-                return new Unauthorized();
+                return new Forbidden();
             }
 
             product.Update(

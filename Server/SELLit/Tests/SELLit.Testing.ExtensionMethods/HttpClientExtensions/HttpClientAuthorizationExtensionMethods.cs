@@ -1,13 +1,12 @@
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using SELLit.Common;
+using SELLit.Server.Features;
 using SELLit.Server.Features.Identity.Commands.Login;
 
-namespace SELLit.IntegrationTests.Setup;
+namespace SELLit.Testing.ExtensionMethods.HttpClientExtensions;
 
-internal static class HttpClientAuthorizationExtensionMethods
+public static partial class HttpClientExtensionMethods
 {
-    internal static async Task<HttpClient> WithAdminAuthentication(this HttpClient client)
+    public static async Task<HttpClient> WithAdminAuthentication(this HttpClient client)
     {
         var response = await client.PostAsJsonAsync(Routes.Identity.Login, new LoginCommand()
         {
@@ -21,7 +20,7 @@ internal static class HttpClientAuthorizationExtensionMethods
         return client;
     }
     
-    internal static async Task<HttpClient> WithDefaultAuthentication(this HttpClient client)
+    public static async Task<HttpClient> WithDefaultAuthentication(this HttpClient client)
     {
         var response = await client.PostAsJsonAsync(Routes.Identity.Login, new LoginCommand()
         {
@@ -35,11 +34,11 @@ internal static class HttpClientAuthorizationExtensionMethods
         return client;
     }
     
-    internal static async Task<HttpClient> WithNoAuthentication(this HttpClient client)
+    public static Task<HttpClient> WithNoAuthentication(this HttpClient client)
     {
         client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("bearer", string.Empty);
 
-        return client;
+        return Task.FromResult(client);
     }
 }

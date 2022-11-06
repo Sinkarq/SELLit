@@ -30,6 +30,7 @@
       <ProjectReference Include="..\..\Data\SELLit.Data.Models\SELLit.Data.Models.csproj" />
       <ProjectReference Include="..\..\Data\SELLit.Data\SELLit.Data.csproj" />
       <ProjectReference Include="..\..\Web\SELLit\SELLit.Server.csproj" />
+      <ProjectReference Include="..\SELLit.Testing.ExtensionMethods\SELLit.Testing.ExtensionMethods.csproj" />
     </ItemGroup>
 
 </Project>
