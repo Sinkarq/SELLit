@@ -1,3 +1,4 @@
+using CommunityToolkit.Diagnostics;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
@@ -16,9 +17,9 @@ public class IntegrationTestFactory<TProgram, TDbContext> : WebApplicationFactor
     where TDbContext : DbContext
 {
     private readonly TestcontainerDatabase container;
-    public HttpClient HttpClient;
-    public IHashids Hashids;
-    private ApplicationDbContext dbContext;
+    public HttpClient HttpClient = default!;
+    public IHashids Hashids = default!;
+    private ApplicationDbContext dbContext = default!;
 
     public IntegrationTestFactory() =>
         container = new TestcontainersBuilder<MsSqlTestcontainer>()
@@ -45,9 +46,10 @@ public class IntegrationTestFactory<TProgram, TDbContext> : WebApplicationFactor
         await container.StartAsync();
         this.HttpClient = CreateClient();
         var serviceProvider = this.Services.CreateScope().ServiceProvider;
-        var dbContext = serviceProvider.GetService<ApplicationDbContext>();
-        this.dbContext = dbContext;
-        dbContext.SeedTestDatabaseAsync(serviceProvider).GetAwaiter().GetResult();
+        var context = serviceProvider.GetService<ApplicationDbContext>();
+        Guard.IsNotNull(context, "ApplicationDbContext can't be resolved from the DI container");
+        this.dbContext = context;
+        context.SeedTestDatabaseAsync(serviceProvider).GetAwaiter().GetResult();
         this.Hashids = serviceProvider.GetService<IHashids>()!;
     }
 

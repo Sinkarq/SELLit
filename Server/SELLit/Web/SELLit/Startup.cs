@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using SELLit.Data;
 using SELLit.Server.Infrastructure.Extensions;
@@ -26,9 +25,9 @@ public class Startup
             .AddDbContext<ApplicationDbContext>(
                 options =>
                 {
-                    options.UseSqlServer(this.Configuration.GetDefaultConnection(), options =>
+                    options.UseSqlServer(this.Configuration.GetDefaultConnection(), optionsBuilder =>
                     {
-                        options.EnableRetryOnFailure(maxRetryCount: 4, TimeSpan.FromSeconds(1),
+                        optionsBuilder.EnableRetryOnFailure(maxRetryCount: 4, TimeSpan.FromSeconds(1),
                             errorNumbersToAdd: Array.Empty<int>());
                     });
 
@@ -48,7 +47,7 @@ public class Startup
             .AddIdentity()
             .AddJwtAuthentication(services.GetApplicationSettings(this.Configuration))
             .AddApplicationServices()
-            .AddMediatR(typeof(Startup).Assembly)
+            .AddMediator(configure => configure.ServiceLifetime = ServiceLifetime.Scoped)
             .AddHttpContextAccessor()
             .AddSwagger()
             .AddDatabaseDeveloperPageExceptionFilter()

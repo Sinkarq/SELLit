@@ -29,7 +29,7 @@ public sealed class ApplicationDbContextSeeder : ISeeder
         {
             await seeder.SeedAsync(dbContext, serviceProvider);
             await dbContext.SaveChangesAsync();
-            logger.LogInformation($"Seeder {seeder.GetType().Name} done.");
+            logger.LogInformation("Seeder {Name} done", seeder.GetType().Name);
         }
     }
 }

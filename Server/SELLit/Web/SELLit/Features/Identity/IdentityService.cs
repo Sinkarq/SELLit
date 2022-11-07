@@ -46,6 +46,6 @@ public sealed class IdentityService : IIdentityService
         return tokenHandler.WriteToken(token);
     }
 
-    public async Task<string> Username(string userId)
+    public async Task<string?> Username(string userId)
         => await this.userManager.Users.Where(x => x.Id == userId).Select(x => x.UserName).FirstOrDefaultAsync();
 }

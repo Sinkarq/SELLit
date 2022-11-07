@@ -99,6 +99,6 @@ public class UpdateCategoryTests
 
 public sealed class UpdateCategoryTestCommand
 {
-    public int Id { get; set; } = default!;
+    public int Id { get; set; }
     public string Name { get; set; } = default!;
 }

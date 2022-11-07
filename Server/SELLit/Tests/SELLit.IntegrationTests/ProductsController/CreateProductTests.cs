@@ -5,7 +5,7 @@ namespace SELLit.IntegrationTests.ProductsController;
 [Collection(nameof(IntegrationTests))]
 public class CreateProductTests
 {
-    private static IntegrationTestFactory<Startup, ApplicationDbContext> Factory;
+    private static IntegrationTestFactory<Startup, ApplicationDbContext> Factory = default!;
     private const string CreateProductRoute = Routes.Products.Create;
     private readonly HttpClient httpClient;
     private readonly CreateProductTestCommand defaultCommand;
@@ -54,13 +54,13 @@ public class CreateProductTests
 
 internal sealed record CreateProductTestCommand
 {
-    public string Title { get; set; }
+    public string Title { get; set; } = default!;
 
-    public string Description { get; set; }
+    public string Description { get; set; } = default!;
 
-    public string Location { get; set; }
+    public string Location { get; set; } = default!;
 
-    public string PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; } = default!;
 
     public double Price { get; set; }
 

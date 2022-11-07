@@ -7,9 +7,14 @@ public static partial class HttpClientExtensionMethods
     {
         var client = await inputClient;
         var response = await client.GetAsync(route);
+
+        Guard.IsNotNull(response, "client failed to fetch result");
+        
         var content = await response.Content.ReadAsStringAsync();
         var result = JsonSerializer.Deserialize<TResponse>(content,JsonSerializerHelperClass.Options);
-
+        
+        Guard.IsNotNull(result, "json serializer failed to serialize content");
+        
         response.StatusCode.Should().Be(statusCode);
 
         return result;
@@ -19,9 +24,13 @@ public static partial class HttpClientExtensionMethods
         this HttpClient client, string route, HttpStatusCode statusCode)
     {
         var response = await client.GetAsync(route);
+        Guard.IsNotNull(response, "client failed to fetch result");
+        
         var content = await response.Content.ReadAsStringAsync();
         var result = JsonSerializer.Deserialize<TResponse>(content,JsonSerializerHelperClass.Options);
 
+        Guard.IsNotNull(result, "json serializer failed to serialize content");
+        
         response.StatusCode.Should().Be(statusCode);
 
         return result;
@@ -32,6 +41,7 @@ public static partial class HttpClientExtensionMethods
     {
         var client = await inputClient;
         var response = await client.GetAsync(route);
+        Guard.IsNotNull(response, "client failed to fetch result");
 
         response.StatusCode.Should().Be(statusCode);
     }
@@ -40,6 +50,7 @@ public static partial class HttpClientExtensionMethods
         this HttpClient client, string route, HttpStatusCode statusCode)
     {
         var response = await client.GetAsync(route);
+        Guard.IsNotNull(response, "client failed to fetch result");
 
         response.StatusCode.Should().Be(statusCode);
     }

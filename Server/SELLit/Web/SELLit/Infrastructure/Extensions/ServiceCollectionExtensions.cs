@@ -4,7 +4,6 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using SELLit.Common;
 using SELLit.Data;
 using SELLit.Data.Common.Repositories;
@@ -83,7 +82,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddAutoMapper(this IServiceCollection services)
     {
         AutoMapperConfig.RegisterMappings(typeof(Startup).Assembly);
-
+        
         services.AddSingleton(AutoMapperConfig.MapperInstance);
         
         return services;

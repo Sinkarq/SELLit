@@ -12,7 +12,7 @@ public sealed class EfDeletableEntityRepository<TEntity> : EfRepository<TEntity>
 
     public override IQueryable<TEntity> AllAsNoTracking() => base.AllAsNoTracking().Where(x => !x.IsDeleted);
 
-    public IQueryable<TEntity> AllWithDeleted() => base.All().IgnoreQueryFilters();
+    public IQueryable<TEntity> AllWithDeleted() => All().IgnoreQueryFilters();
 
     public IQueryable<TEntity> AllAsNoTrackingWithDeleted() => base.AllAsNoTracking().IgnoreQueryFilters();
 

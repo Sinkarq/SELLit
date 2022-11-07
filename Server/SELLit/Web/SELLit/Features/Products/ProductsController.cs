@@ -26,7 +26,7 @@ public sealed class ProductsController : ApiController
     [SwaggerOperation(Summary = "Gets all products")]
     [SwaggerResponse(200, "Gets all products", typeof(List<GetAllCategoriesQueryResponseModel>))]
     public async Task<IActionResult> GetProducts()
-        => this.Ok(await this.Mediator.Send(new GetAllProductsQuery()));
+        => this.Ok(await this.Mediator.Send(GetAllProductsQuery.Instance));
 
     [HttpGet]
     [AllowAnonymous]

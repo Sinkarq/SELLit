@@ -7,6 +7,7 @@ public static partial class HttpClientExtensionMethods
     {
         var client = await inputClient;
         var response = await client.DeleteAsync(route);
+        Guard.IsNotNull(response, "client failed to fetch result");
 
         response.StatusCode.Should().Be(statusCode);
     }

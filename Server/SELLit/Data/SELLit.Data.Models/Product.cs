@@ -1,5 +1,3 @@
-using SELLit.Common;
-
 namespace SELLit.Data.Models;
 
 public sealed class Product : BaseDeletableModel<int>
@@ -14,29 +12,26 @@ public sealed class Product : BaseDeletableModel<int>
         string userId,
         DeliveryResponsibility deliveryResponsibility)
     {
-        NullGuardMethods.Guard(title, description, location, phoneNumber, userId);
-        NullGuardMethods.Guard(price);
-        NullGuardMethods.Guard(categoryId);
-        NullGuardMethods.Guard(deliveryResponsibility);
-        this.Title = title;
-        this.Description = description;
-        this.Location = location;
-        this.PhoneNumber = phoneNumber;
-        this.Price = price;
-        this.CategoryId = categoryId;
-        this.UserId = userId;
+        this.Title = GuardWith.NotNull(title);
+        this.Description = GuardWith.NotNull(description);
+        this.Location = GuardWith.NotNull(location);
+        this.PhoneNumber = GuardWith.NotNull(phoneNumber);
+        this.Price = GuardWith.NotNull(price);
+        this.CategoryId = GuardWith.NotNull(categoryId);
+        this.UserId = GuardWith.NotNull(userId);
+        this.DeliveryResponsibility = GuardWith.NotNull(deliveryResponsibility);
         this.OrderCount = 0;
     }
 
     private Product() {}
-    
-    public string Title { get; private set; }
 
-    public string Description { get; private set; }
-    
-    public string Location { get; private set; }
-    
-    public string PhoneNumber { get; private set; }
+    public string Title { get; private set; } = "Unknown";
+
+    public string Description { get; private set; } = "Unknown";
+
+    public string Location { get; private set; } = "Unknown";
+
+    public string PhoneNumber { get; private set; } = "Unknown";
 
     public double Price { get; private set; }
     
@@ -44,24 +39,20 @@ public sealed class Product : BaseDeletableModel<int>
     
     public DeliveryResponsibility DeliveryResponsibility { get; private set; }
 
-    public string UserId { get; set; }
-    public User User { get; private set; }
-    
+    public string UserId { get; set; } = "Unknown";
+    public User User { get; private set; } = default!;
+
     public int CategoryId { get; private set; }
-    public Category Category { get; private set; }
+    public Category Category { get; private set; } = default!;
 
     public void Update(string title, string description, string location, string phoneNumber, double price,
         DeliveryResponsibility deliveryResponsibility)
     {
-        NullGuardMethods.Guard(title, description, location, phoneNumber);
-        NullGuardMethods.Guard(price);
-        NullGuardMethods.Guard(deliveryResponsibility);
-
-        this.Title = title;
-        this.Description = description;
-        this.Location = location;
-        this.PhoneNumber = phoneNumber;
-        this.Price = price;
-        this.DeliveryResponsibility = deliveryResponsibility;
+        this.Title = GuardWith.NotNull(title);
+        this.Description = GuardWith.NotNull(description);
+        this.Location = GuardWith.NotNull(location);
+        this.PhoneNumber = GuardWith.NotNull(phoneNumber);
+        this.Price = GuardWith.NotNull(price);
+        this.DeliveryResponsibility = GuardWith.NotNull(deliveryResponsibility);
     }
 }

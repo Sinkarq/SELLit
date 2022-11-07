@@ -1,8 +1,6 @@
 using AspNetCore.Hashids.Mvc;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using OneOf;
-using OneOf.Types;
+
 using SELLit.Data.Common.Repositories;
 
 namespace SELLit.Server.Features.Categories.Commands.Delete;
@@ -19,10 +17,9 @@ public sealed class DeleteCategoryCommand : IRequest<OneOf<DeleteCategoryCommand
         public DeleteCategoryCommandHandler(IDeletableEntityRepository<Category> categoryRepository) 
             => this.categoryRepository = categoryRepository;
 
-        public async Task<OneOf<DeleteCategoryCommandResponseModel, NotFound>> Handle(
+        public async ValueTask<OneOf<DeleteCategoryCommandResponseModel, NotFound>> Handle(
             DeleteCategoryCommand request, CancellationToken cancellationToken)
-        {
-            // TODO: Test query and delete entity with only ID
+        { 
             var category = await this.categoryRepository
                 .Collection().FindAsync(request.Id);
 

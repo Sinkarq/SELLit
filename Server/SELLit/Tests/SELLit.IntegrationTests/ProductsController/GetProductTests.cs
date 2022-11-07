@@ -1,3 +1,4 @@
+using CommunityToolkit.Diagnostics;
 using SELLit.Data.Models;
 
 namespace SELLit.IntegrationTests.ProductsController;
@@ -30,9 +31,12 @@ public class GetProductTests
             .WithDefaultAuthentication()
             .PostAsJsonShouldBeWithStatusCodeAsync(Routes.Products.Create, defaultCommand, HttpStatusCode.Created);
 
+        var locationHeader = response.Headers.Location;
+        Guard.IsNotNull(locationHeader, "Location header is not present in the response headers");
+
         var product = await this.httpClient
             .DeserializeGetShouldBeWithStatusCodeAsync<GetProductQueryTestResponseModel>(
-                response.Headers.Location.LocalPath,
+                locationHeader.LocalPath,
                 HttpStatusCode.OK);
 
         product.Title.Should().Be(defaultCommand.Title);
@@ -54,19 +58,19 @@ public class GetProductTests
 
 public class GetProductQueryTestResponseModel
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = default!;
 
-    public string Title { get; set; }
+    public string Title { get; set; } = default!;
 
-    public string Description { get; set; }
+    public string Description { get; set; } = default!;
 
-    public string Location { get; set; }
+    public string Location { get; set; } = default!;
 
-    public string PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; } = default!;
 
     public double Price { get; set; }
 
     public DeliveryResponsibility DeliveryResponsibility { get; set; }
     
-    public string CategoryName { get; set; }
+    public string CategoryName { get; set; } = default!;
 }

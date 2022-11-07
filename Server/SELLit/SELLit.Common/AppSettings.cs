@@ -2,5 +2,5 @@
 
 public sealed class AppSettings
 {
-    public string Secret { get; set; }
+    public string Secret { get; set; } = default!;
 }

@@ -1,8 +1,5 @@
 using AspNetCore.Hashids.Mvc;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using OneOf;
-using OneOf.Types;
 using SELLit.Data.Common.Repositories;
 using SELLit.Server.Services.Interfaces;
 
@@ -25,7 +22,7 @@ public sealed class DeleteProductCommand : IRequest<OneOf<DeleteProductCommandRe
             this.currentUser = currentUser;
         }
 
-        public async Task<OneOf<DeleteProductCommandResponseModel, NotFound, Forbidden>> Handle(
+        public async ValueTask<OneOf<DeleteProductCommandResponseModel, NotFound, Forbidden>> Handle(
             DeleteProductCommand request, CancellationToken cancellationToken)
         {
             var entity = await this.productRepository

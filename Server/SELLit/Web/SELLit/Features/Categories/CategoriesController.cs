@@ -26,8 +26,7 @@ public sealed class CategoriesController : ApiController
     [SwaggerResponse(200, "Gets all categories", typeof(List<GetAllCategoriesQueryResponseModel>))]
     public async Task<IActionResult> GetCategories()
     {
-        var query = new GetAllCategoriesQuery();
-        var categories = await this.Mediator.Send(query);
+        var categories = await this.Mediator.Send(GetAllCategoriesQuery.Instance);
 
         return this.Ok(categories);
     }

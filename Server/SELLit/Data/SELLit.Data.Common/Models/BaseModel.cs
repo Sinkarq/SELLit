@@ -4,7 +4,7 @@ namespace SELLit.Data.Common.Models;
 
 public abstract class BaseModel<TKey> : IAuditInfo
 {
-    [Key] public TKey Id { get; set; }
+    [Key] public TKey Id { get; set; } = default!;
 
     public DateTime CreatedOn { get; set; }
 

@@ -1,17 +1,14 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using OneOf;
-using OneOf.Types;
 using SELLit.Common;
 
 namespace SELLit.Server.Features.Identity.Commands.Login;
 
 public sealed class LoginCommand : IRequest<OneOf<LoginCommandResponseModel, InvalidLoginCredentials>>
 {
-    public string Username { get; set; }
+    public string Username { get; set; } = default!;
 
-    public string Password { get; set; }
+    public string Password { get; set; } = default!;
 
     public sealed class LoginCommandRequestHandler : 
         IRequestHandler<LoginCommand, OneOf<LoginCommandResponseModel, InvalidLoginCredentials>>
@@ -28,7 +25,7 @@ public sealed class LoginCommand : IRequest<OneOf<LoginCommandResponseModel, Inv
             this.appSettings = appSettings.Value;
         }
 
-        public async Task<OneOf<LoginCommandResponseModel, InvalidLoginCredentials>> Handle(LoginCommand request,
+        public async ValueTask<OneOf<LoginCommandResponseModel, InvalidLoginCredentials>> Handle(LoginCommand request,
             CancellationToken cancellationToken)
         {
             var user = await this.userManager.FindByNameAsync(request.Username);

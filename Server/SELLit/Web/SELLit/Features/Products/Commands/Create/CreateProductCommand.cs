@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
+using AspNetCore.Hashids.Json;
 using AutoMapper;
-using MediatR;
 using SELLit.Data.Common.Repositories;
 using SELLit.Server.Infrastructure.Mapping.Interfaces;
 using SELLit.Server.Services.Interfaces;
@@ -9,13 +9,13 @@ namespace SELLit.Server.Features.Products.Commands.Create;
 
 public sealed class CreateProductCommand : IRequest<CreateProductCommandResponseModel>, IMapTo<Product>
 {
-    public string Title { get; set; }
+    public string Title { get; set; } = "Unknown";
 
-    public string Description { get; set; }
+    public string Description { get; set; } = "Unknown";
 
-    public string Location { get; set; }
+    public string Location { get; set; } = "Unknown";
 
-    public string PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; } = "Unknown";
 
     public double Price { get; set; }
 
@@ -40,7 +40,7 @@ public sealed class CreateProductCommand : IRequest<CreateProductCommandResponse
             this.currentUser = currentUser;
         }
 
-        public async Task<CreateProductCommandResponseModel> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+        public async ValueTask<CreateProductCommandResponseModel> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
             var product = this.mapper.Map<Product>(request);
             product.UserId = this.currentUser.UserId;
@@ -48,7 +48,7 @@ public sealed class CreateProductCommand : IRequest<CreateProductCommandResponse
             await this.productRepository.AddAsync(product, cancellationToken);
             var entitiesWritten = await this.productRepository.SaveChangesAsync(cancellationToken);
 
-            return entitiesWritten == 0 ? null : this.mapper.Map<CreateProductCommandResponseModel>(product);
+            return entitiesWritten is 0 ? null! : this.mapper.Map<CreateProductCommandResponseModel>(product);
         }
     }
 }

@@ -4,18 +4,20 @@ namespace SELLit.Common;
 /// <summary>
 /// Guards string value against nulls.
 /// </summary>
-public static class NullGuardMethods
+public static class GuardWith
 {
-    public static void Guard<T>(T value)
+    public static T NotNull<T>(T value)
     {
         CommunityToolkit.Diagnostics.Guard.IsNotNull(value);
+
+        return value;
     }
 
-    public static void Guard<T>(params T[] objects)
+    public static void NotNull<T>(params T[] objects)
     {
         foreach (var obj in objects)
         {
-            Guard(obj);
+            NotNull(obj);
         }
     } 
 }

@@ -6,5 +6,4 @@ global using SELLit.Server.Features;
 global using SELLit.IntegrationTests.Setup;
 global using System.Net;
 global using Bogus;
-global using HashidsNet;
 global using SELLit.Testing.ExtensionMethods.HttpClientExtensions;

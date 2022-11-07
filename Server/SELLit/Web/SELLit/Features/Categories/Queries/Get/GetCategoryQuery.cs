@@ -1,6 +1,4 @@
-using System.Text.Json.Serialization;
 using AspNetCore.Hashids.Mvc;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SELLit.Data.Common.Repositories;
@@ -9,6 +7,7 @@ namespace SELLit.Server.Features.Categories.Queries.Get;
 
 public sealed class GetCategoryQuery : IRequest<GetCategoryQueryResponseModel>
 {
+    [FromRoute]
     [ModelBinder(typeof(HashidsModelBinder))]
     public int Id { get; set; }
 
@@ -20,7 +19,7 @@ public sealed class GetCategoryQuery : IRequest<GetCategoryQueryResponseModel>
             IDeletableEntityRepository<Category> categoryRepository)
             => this.categoryRepository = categoryRepository;
 
-        public async Task<GetCategoryQueryResponseModel> Handle(GetCategoryQuery request,
+        public async ValueTask<GetCategoryQueryResponseModel> Handle(GetCategoryQuery request,
             CancellationToken cancellationToken)
         {
             var category = await this.categoryRepository
@@ -32,7 +31,7 @@ public sealed class GetCategoryQuery : IRequest<GetCategoryQueryResponseModel>
                     Name = x.Name
                 }).FirstOrDefaultAsync(cancellationToken);
 
-            return category;
+            return category!;
         }
     }
 }

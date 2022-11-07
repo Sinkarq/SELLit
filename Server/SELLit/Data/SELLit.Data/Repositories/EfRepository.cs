@@ -51,7 +51,7 @@ public class EfRepository<TEntity> : IRepository<TEntity>
     {
         if (disposing)
         {
-            this.Context?.Dispose();
+            this.Context.Dispose();
         }
     }
 }

@@ -12,5 +12,5 @@ public class ErrorResponseModel
     }
 
     public string FieldName { get; set; } = default!;
-    public string Message { get; set; }
+    public string Message { get; set; } = "Unknown";
 }

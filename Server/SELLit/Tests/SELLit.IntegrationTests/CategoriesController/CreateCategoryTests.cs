@@ -1,3 +1,4 @@
+using CommunityToolkit.Diagnostics;
 using SELLit.Common;
 using SELLit.Server.Features.Categories.Commands.Create;
 using SELLit.Server.Infrastructure;
@@ -29,7 +30,10 @@ public class CreateCategoryTests
                     Name = name
                 }, HttpStatusCode.Created);
 
-        var url = responseMessage.Headers.Location.LocalPath;
+        var locationHeader = responseMessage.Headers.Location;
+        Guard.IsNotNull(locationHeader, "locationHeader is not present in the response headers");
+        
+        var url = locationHeader.LocalPath;
         var category = await responseMessage.DeserializeHttpContentAsync<CreateCategoryCommandResponseModel>();
         category.Id.Should().NotBeNullOrEmpty();
         category.Name.Should().Be(name);
@@ -72,7 +76,7 @@ public class CreateCategoryTests
 
 internal sealed class CreateCategoryCommandResponseModel
 {
-    public string Id { get; set; }
-    
-    public string Name { get; set; }
+    public string Id { get; set; } = default!;
+
+    public string Name { get; set; } = default!;
 }

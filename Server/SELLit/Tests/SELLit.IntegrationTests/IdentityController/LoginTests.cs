@@ -5,13 +5,11 @@ namespace SELLit.IntegrationTests.IdentityController;
 [Collection(nameof(IntegrationTests))]
 public class LoginTests
 {
-    private readonly IntegrationTestFactory<Startup, ApplicationDbContext> Factory;
     private readonly HttpClient httpClient;
     private const string LoginRoute = Routes.Identity.Login;
 
     public LoginTests(IntegrationTestFactory<Startup, ApplicationDbContext> factory)
     {
-        Factory = factory;
         this.httpClient = factory.HttpClient;
     }
 

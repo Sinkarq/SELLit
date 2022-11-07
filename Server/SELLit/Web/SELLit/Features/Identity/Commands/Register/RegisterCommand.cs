@@ -1,23 +1,20 @@
 ﻿using AutoMapper;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
-using OneOf;
-using OneOf.Types;
 using SELLit.Server.Infrastructure.Mapping.Interfaces;
 
 namespace SELLit.Server.Features.Identity.Commands.Register;
 
 public sealed class RegisterCommand : IRequest<OneOf<RegisterCommandResponseModel, InvalidLoginCredentials>>, IMapTo<User>
 {
-    public string FirstName { get; set; }
+    public string FirstName { get; set; } = default!;
 
-    public string LastName { get; set; }
-    
-    public string Username { get; set; }
+    public string LastName { get; set; } = default!;
 
-    public string Password { get; set; }
+    public string Username { get; set; } = default!;
 
-    public string Email { get; set; }
+    public string Password { get; set; } = default!;
+
+    public string Email { get; set; } = default!;
 
     public sealed class RegisterCommandRequestModelHandler : IRequestHandler<RegisterCommand,
         OneOf<RegisterCommandResponseModel, InvalidLoginCredentials>>
@@ -31,7 +28,7 @@ public sealed class RegisterCommand : IRequest<OneOf<RegisterCommandResponseMode
             this.mapper = mapper;
         }
 
-        public async Task<OneOf<RegisterCommandResponseModel, InvalidLoginCredentials>> Handle(RegisterCommand request,
+        public async ValueTask<OneOf<RegisterCommandResponseModel, InvalidLoginCredentials>> Handle(RegisterCommand request,
             CancellationToken cancellationToken)
         {
             var user = this.mapper.Map<User>(request);

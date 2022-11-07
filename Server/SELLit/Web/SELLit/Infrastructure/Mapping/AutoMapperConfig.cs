@@ -8,7 +8,7 @@ public static class AutoMapperConfig
 {
     private static bool initialized;
 
-    public static IMapper MapperInstance { get; set; }
+    public static IMapper MapperInstance { get; set; } = default!;
 
     public static void RegisterMappings(params Assembly[] assemblies)
     {
@@ -88,15 +88,15 @@ public static class AutoMapperConfig
             where typeof(IHaveCustomMappings).GetTypeInfo().IsAssignableFrom(t) &&
                   !t.GetTypeInfo().IsAbstract &&
                   !t.GetTypeInfo().IsInterface
-            select (IHaveCustomMappings)Activator.CreateInstance(t);
+            select (IHaveCustomMappings)Activator.CreateInstance(t)!;
 
         return customMaps;
     }
 
     private class TypesMap
     {
-        public Type Source { get; set; }
+        public Type Source { get; set; } = default!;
 
-        public Type Destination { get; set; }
+        public Type Destination { get; set; } = default!;
     }
 }

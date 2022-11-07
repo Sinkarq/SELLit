@@ -1,10 +1,12 @@
-using MediatR;
+using Microsoft.EntityFrameworkCore;
 using SELLit.Data.Common.Repositories;
 
 namespace SELLit.Server.Features.Products.Queries.GetAll;
 
 public sealed class GetAllProductsQuery : IRequest<IEnumerable<GetAllProductsQueryResponseModel>>
 {
+    public static readonly GetAllProductsQuery Instance = new();
+
     public sealed class
         GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, IEnumerable<GetAllProductsQueryResponseModel>>
     {
@@ -13,18 +15,14 @@ public sealed class GetAllProductsQuery : IRequest<IEnumerable<GetAllProductsQue
         public GetAllProductsQueryHandler(IDeletableEntityRepository<Product> productRepository)
             => this.productRepository = productRepository;
 
-        public async Task<IEnumerable<GetAllProductsQueryResponseModel>> Handle(
-            GetAllProductsQuery request, CancellationToken cancellationToken)
-        {
-            var entities = this.productRepository
+        public async ValueTask<IEnumerable<GetAllProductsQueryResponseModel>> Handle(
+            GetAllProductsQuery request, CancellationToken cancellationToken) =>
+            await this.productRepository
                 .AllAsNoTracking()
                 .Select(x => new GetAllProductsQueryResponseModel()
                 {
                     Id = x.Id,
                     Title = x.Title,
-                });
-
-            return entities;
-        }
+                }).ToListAsync(cancellationToken);
     }
 }

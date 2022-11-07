@@ -17,8 +17,8 @@ public sealed class ApplicationDbContext : IdentityDbContext<User>
     }
 
     //DbSets
-    public DbSet<Category> Categories { get; set; }
-    public DbSet<Product> Products { get; set; }
+    public DbSet<Category> Categories { get; set; } = default!;
+    public DbSet<Product> Products { get; set; } = default!;
 
     public override int SaveChanges() => this.SaveChanges(true);
 
@@ -55,6 +55,10 @@ public sealed class ApplicationDbContext : IdentityDbContext<User>
             .Where(et => typeof(IDeletableEntity).IsAssignableFrom(et.ClrType));
         foreach (var deletableEntityType in deletableEntityTypes)
         {
+            if (SetIsDeletedQueryFilterMethod is null)
+            {
+                continue;
+            }
             var method = SetIsDeletedQueryFilterMethod.MakeGenericMethod(deletableEntityType.ClrType);
             method.Invoke(null, new object[] {builder});
         }

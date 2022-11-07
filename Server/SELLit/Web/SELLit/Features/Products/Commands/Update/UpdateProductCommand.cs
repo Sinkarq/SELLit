@@ -1,8 +1,6 @@
 using System.Text.Json.Serialization;
+using AspNetCore.Hashids.Json;
 using AutoMapper;
-using MediatR;
-using OneOf;
-using OneOf.Types;
 using SELLit.Data.Common.Repositories;
 using SELLit.Server.Services.Interfaces;
 
@@ -13,15 +11,15 @@ public sealed class UpdateProductCommand : IRequest<OneOf<UpdateProductCommandRe
     [JsonConverter(typeof(HashidsJsonConverter))]
     public int Id { get; set; }
     
-    public string Title { get; set; }
+    public string Title { get; set; } = "Unknown";
 
-    public string Description { get; set; }
+    public string Description { get; set; } = "Unknown";
 
-    public string Location { get; set; }
+    public string Location { get; set; } = "Unknown";
 
-    public string PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; } = "Unknown";
 
-    public double Price { get; set; }
+    public double Price { get; set; } 
 
     public DeliveryResponsibility DeliveryResponsibility { get; set; }
     
@@ -39,7 +37,7 @@ public sealed class UpdateProductCommand : IRequest<OneOf<UpdateProductCommandRe
             this.currentUser = currentUser;
         }
 
-        public async Task<OneOf<UpdateProductCommandResponseModel, NotFound, Forbidden>> Handle(
+        public async ValueTask<OneOf<UpdateProductCommandResponseModel, NotFound, Forbidden>> Handle(
             UpdateProductCommand request, CancellationToken cancellationToken)
         {
             var product = await this.productRepository.Collection().FindAsync(request.Id);

@@ -1,14 +1,11 @@
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using OneOf;
-using OneOf.Types;
 using SELLit.Data.Common.Repositories;
 
 namespace SELLit.Server.Features.Categories.Commands.Create;
 
 public sealed class CreateCategoryCommand : IRequest<OneOf<CreateCategoryCommandResponseModel, UniqueConstraintError>>
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = default!;
 
     public sealed class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand,
         OneOf<CreateCategoryCommandResponseModel, UniqueConstraintError>>
@@ -18,7 +15,7 @@ public sealed class CreateCategoryCommand : IRequest<OneOf<CreateCategoryCommand
         public CreateCategoryCommandHandler(IDeletableEntityRepository<Category> categoryRepository)
             => this.categoryRepository = categoryRepository;
 
-        public async Task<OneOf<CreateCategoryCommandResponseModel, UniqueConstraintError>> Handle(
+        public async ValueTask<OneOf<CreateCategoryCommandResponseModel, UniqueConstraintError>> Handle(
             CreateCategoryCommand request, CancellationToken cancellationToken)
         {
             if (await this.categoryRepository.AllAsNoTrackingWithDeleted()

@@ -1,8 +1,6 @@
 using System.Text.Json.Serialization;
-using MediatR;
+using AspNetCore.Hashids.Json;
 using Microsoft.EntityFrameworkCore;
-using OneOf;
-using OneOf.Types;
 using SELLit.Data.Common.Repositories;
 
 namespace SELLit.Server.Features.Categories.Commands.Update;
@@ -11,8 +9,8 @@ public sealed class UpdateCategoryCommand : IRequest<OneOf<UpdateCategoryCommand
 {
     [JsonConverter(typeof(HashidsJsonConverter))]
     public int Id { get; set; }
-    
-    public string Name { get; set; }
+
+    public string Name { get; set; } = default!;
     
     public sealed class RenameCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand,OneOf<UpdateCategoryCommandResponseModel, NotFound, UniqueConstraintError>>
     {
@@ -20,7 +18,7 @@ public sealed class UpdateCategoryCommand : IRequest<OneOf<UpdateCategoryCommand
 
         public RenameCategoryCommandHandler(IDeletableEntityRepository<Category> categoryRepository) => this.categoryRepository = categoryRepository;
 
-        public async Task<OneOf<UpdateCategoryCommandResponseModel, NotFound, UniqueConstraintError>> Handle(
+        public async ValueTask<OneOf<UpdateCategoryCommandResponseModel, NotFound, UniqueConstraintError>> Handle(
             UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
             if (await this.categoryRepository.AllAsNoTrackingWithDeleted()

@@ -1,5 +1,4 @@
 using CommunityToolkit.Diagnostics;
-using SELLit.Common;
 
 namespace SELLit.Data.Models;
 
@@ -9,13 +8,12 @@ public sealed class Category : BaseDeletableModel<int>
 
     public Category(string name)
     {
-        NullGuardMethods.Guard(name);
-        this.Name = name;
+        this.Name = GuardWith.NotNull(name);
     }
     
     private Category() {}
 
-    public string Name { get; private set; }
+    public string Name { get; private set; } = "Unknown";
 
     public IReadOnlyCollection<Product> Products => _products;
 
