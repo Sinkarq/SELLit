@@ -28,6 +28,7 @@ public sealed class GetProductQuery : IRequest<GetProductQueryResponseModel>
         {
             var entity = await this.productRepository
                 .AllAsNoTracking()
+                .TagWith("Get Product")
                 .Where(x => x.Id == request.Id)
                 .Select(x => new GetProductQueryResponseModel
                 {

@@ -17,8 +17,9 @@ public sealed class IdentityController : ApiController
     [SwaggerResponse(400, "Errors occured", typeof(ErrorModel))]
     public async Task<IActionResult> Register(
         [FromBody]
-        RegisterCommand model) =>
-        (await this.Mediator.Send(model)).Match<IActionResult>(
+        RegisterCommand model,
+        CancellationToken ct) =>
+        (await this.Mediator.Send(model, ct)).Match<IActionResult>(
             registered => this.NoContent(),
             wrongCredentials =>
                 this.BadRequest(new ErrorModel(
@@ -30,10 +31,10 @@ public sealed class IdentityController : ApiController
     [SwaggerResponse(204, "Returns a login token", typeof(LoginCommandResponseModel))]
     [SwaggerResponse(400, "Invalid login credentials", typeof(ErrorModel))]
     public async Task<IActionResult> Login(
-        [FromBody]
-        LoginCommand requestModel)
+        [FromBody] LoginCommand requestModel,
+        CancellationToken ct)
     {
-        var response = await this.Mediator.Send(requestModel);
+        var response = await this.Mediator.Send(requestModel, ct);
         return response.Match<IActionResult>(
             loginCommandOutputModel => this.Ok(loginCommandOutputModel),
             wrongCredentials => this.BadRequest("Invalid login credentials."));

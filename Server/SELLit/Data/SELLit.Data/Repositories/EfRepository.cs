@@ -20,6 +20,8 @@ public class EfRepository<TEntity> : IRepository<TEntity>
     public virtual IQueryable<TEntity> AllAsNoTracking() => this.DbSet.AsNoTracking();
 
     public virtual Task AddAsync(TEntity entity) => this.DbSet.AddAsync(entity).AsTask();
+
+    public IQueryable<TEntity> TagWith(string tag) => this.DbSet.TagWith(tag);
     
     public virtual Task AddAsync(TEntity entity, CancellationToken cancellationToken) => this.DbSet.AddAsync(entity, cancellationToken).AsTask();
 

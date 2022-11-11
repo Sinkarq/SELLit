@@ -25,8 +25,8 @@ public sealed class ProductsController : ApiController
     [Route(Routes.Products.GetAll)]
     [SwaggerOperation(Summary = "Gets all products")]
     [SwaggerResponse(200, "Gets all products", typeof(List<GetAllCategoriesQueryResponseModel>))]
-    public async Task<IActionResult> GetProducts()
-        => this.Ok(await this.Mediator.Send(GetAllProductsQuery.Instance));
+    public async Task<IActionResult> GetProducts(CancellationToken ct)
+        => this.Ok(await this.Mediator.Send(GetAllProductsQuery.Instance, ct));
 
     [HttpGet]
     [AllowAnonymous]
@@ -35,9 +35,10 @@ public sealed class ProductsController : ApiController
     [SwaggerResponse(200, "Returns category", typeof(GetProductQueryResponseModel))]
     [SwaggerResponse(404, "Doesn't find category")]
     public async Task<IActionResult> GetProduct(
-        [FromRoute] GetProductQuery query)
+        [FromRoute] GetProductQuery query,
+        CancellationToken ct)
     {
-        var product = await this.Mediator.Send(query);
+        var product = await this.Mediator.Send(query, ct);
 
         if (product is null)
         {
@@ -53,10 +54,10 @@ public sealed class ProductsController : ApiController
     [SwaggerResponse(200, "Returns created product", typeof(CreateProductCommandResponseModel))]
     [SwaggerResponse(400, "Error occurs", typeof(ErrorResponse))]
     public async Task<IActionResult> CreateProduct(
-        [FromBody]
-        CreateProductCommand command)
+        [FromBody] CreateProductCommand command,
+        CancellationToken ct)
     {
-        var product = await this.Mediator.Send(command);
+        var product = await this.Mediator.Send(command, ct);
         var id = this.hashids.Encode(product.Id);
 
         if (product is null)
@@ -74,9 +75,10 @@ public sealed class ProductsController : ApiController
     [SwaggerResponse(404, "Doesn't find the category to update")]
     [SwaggerResponse(403, "Doesn't have permissions to update this product, only the creator of it has")]
     public async Task<IActionResult> UpdateProduct(
-        [FromBody] UpdateProductCommand command)
+        [FromBody] UpdateProductCommand command,
+        CancellationToken ct)
     {
-        var response = await this.Mediator.Send(command);
+        var response = await this.Mediator.Send(command, ct);
 
         return response.Match<IActionResult>(
             updatedProduct => this.Ok(updatedProduct),
@@ -91,8 +93,9 @@ public sealed class ProductsController : ApiController
     [SwaggerResponse(404, "Doesn't find the product to delete")]
     [SwaggerResponse(403, "Doesn't have permissions to update this product, only the creator of it has")]
     public async Task<IActionResult> DeleteProduct(
-        [FromRoute] DeleteProductCommand command)
-        => (await this.Mediator.Send(command)).Match<IActionResult>(
+        [FromRoute] DeleteProductCommand command,
+        CancellationToken ct)
+        => (await this.Mediator.Send(command, ct)).Match<IActionResult>(
             deleted => this.Ok(),
             notFound => this.NotFound(),
             forbidden => this.Forbid());

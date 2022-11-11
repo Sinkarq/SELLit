@@ -2,12 +2,12 @@ using AspNetCore.Hashids.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SELLit.Data.Common.Repositories;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SELLit.Server.Features.Categories.Queries.Get;
 
 public sealed class GetCategoryQuery : IRequest<GetCategoryQueryResponseModel>
 {
-    [FromRoute]
     [ModelBinder(typeof(HashidsModelBinder))]
     public int Id { get; set; }
 
@@ -24,6 +24,7 @@ public sealed class GetCategoryQuery : IRequest<GetCategoryQueryResponseModel>
         {
             var category = await this.categoryRepository
                 .AllAsNoTracking()
+                .TagWith("Get Category")
                 .Where(x => x.Id == request.Id)
                 .Select(x => new GetCategoryQueryResponseModel
                 {

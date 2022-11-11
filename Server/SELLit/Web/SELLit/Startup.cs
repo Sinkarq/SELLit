@@ -4,6 +4,7 @@ using SELLit.Data;
 using SELLit.Server.Infrastructure.Extensions;
 using SELLit.Server.Infrastructure.Filters;
 using SELLit.Server.Infrastructure.SwaggerConfiguration;
+using Serilog;
 
 namespace SELLit.Server;
 
@@ -54,6 +55,7 @@ public class Startup
             .AddControllers(
                 options =>
                 {
+                    options.Filters.Add<RequestLoggerFilter>();
                     options.Filters.Add<ModelOrNotFoundActionFilter>();
                     options.Filters.Add<ValidationFilter>();
                 });
@@ -66,7 +68,10 @@ public class Startup
             app.UseMigrationsEndPoint();
         }
 
+        app.UseSerilogRequestLogging();
+
         app
+            .UseStaticFiles()
             .UseSwaggerUI()
             .SeedDatabase()
             .UseRouting()

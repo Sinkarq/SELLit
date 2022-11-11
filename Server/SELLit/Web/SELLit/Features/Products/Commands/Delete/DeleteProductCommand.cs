@@ -1,6 +1,7 @@
 using AspNetCore.Hashids.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using SELLit.Data.Common.Repositories;
+using SELLit.Server.Infrastructure.Extensions;
 using SELLit.Server.Services.Interfaces;
 
 namespace SELLit.Server.Features.Products.Commands.Delete;
@@ -15,11 +16,16 @@ public sealed class DeleteProductCommand : IRequest<OneOf<DeleteProductCommandRe
     {
         private readonly IDeletableEntityRepository<Product> productRepository;
         private readonly ICurrentUser currentUser;
+        private readonly ILogger<DeleteProductCommandHandler> logger;
 
-        public DeleteProductCommandHandler(IDeletableEntityRepository<Product> productRepository, ICurrentUser currentUser)
+        public DeleteProductCommandHandler(
+            IDeletableEntityRepository<Product> productRepository,
+            ICurrentUser currentUser,
+            ILogger<DeleteProductCommandHandler> logger)
         {
             this.productRepository = productRepository;
             this.currentUser = currentUser;
+            this.logger = logger;
         }
 
         public async ValueTask<OneOf<DeleteProductCommandResponseModel, NotFound, Forbidden>> Handle(
@@ -41,7 +47,10 @@ public sealed class DeleteProductCommand : IRequest<OneOf<DeleteProductCommandRe
 
             this.productRepository.Delete(entity);
 
-            await this.productRepository.SaveChangesAsync(cancellationToken);
+            using (this.logger.EFQueryScope("Delete Product"))
+            {
+                await this.productRepository.SaveChangesAsync(cancellationToken);
+            }
 
             return new DeleteProductCommandResponseModel();
         }

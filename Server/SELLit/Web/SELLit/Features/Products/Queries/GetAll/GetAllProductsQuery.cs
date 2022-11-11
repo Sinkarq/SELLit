@@ -19,6 +19,7 @@ public sealed class GetAllProductsQuery : IRequest<IEnumerable<GetAllProductsQue
             GetAllProductsQuery request, CancellationToken cancellationToken) =>
             await this.productRepository
                 .AllAsNoTracking()
+                .TagWith("Get All Categories")
                 .Select(x => new GetAllProductsQueryResponseModel()
                 {
                     Id = x.Id,

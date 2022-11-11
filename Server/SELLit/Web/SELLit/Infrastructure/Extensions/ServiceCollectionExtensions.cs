@@ -13,6 +13,7 @@ using SELLit.Server.Features.Identity.Commands.Login;
 using SELLit.Server.Infrastructure.Mapping;
 using SELLit.Server.Services;
 using SELLit.Server.Services.Interfaces;
+using Serilog;
 
 namespace SELLit.Server.Infrastructure.Extensions;
 
@@ -66,6 +67,7 @@ public static class ServiceCollectionExtensions
         => services
             .AddScoped(typeof(IDeletableEntityRepository<>), typeof(EfDeletableEntityRepository<>))
             .AddScoped(typeof(IRepository<>), typeof(EfRepository<>))
+            .AddSingleton(Log.Logger)
             .AddAutoMapper()
             .AddFluentValidationAutoValidation()
             .AddValidatorsFromAssemblyContaining<LoginCommandValidator>()

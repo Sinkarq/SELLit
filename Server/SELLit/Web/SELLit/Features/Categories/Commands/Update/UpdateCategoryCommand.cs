@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using AspNetCore.Hashids.Json;
 using Microsoft.EntityFrameworkCore;
 using SELLit.Data.Common.Repositories;
+using SELLit.Server.Infrastructure.Extensions;
 
 namespace SELLit.Server.Features.Categories.Commands.Update;
 
@@ -12,16 +13,25 @@ public sealed class UpdateCategoryCommand : IRequest<OneOf<UpdateCategoryCommand
 
     public string Name { get; set; } = default!;
     
-    public sealed class RenameCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand,OneOf<UpdateCategoryCommandResponseModel, NotFound, UniqueConstraintError>>
+    public sealed class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand,OneOf<UpdateCategoryCommandResponseModel, NotFound, UniqueConstraintError>>
     {
         private readonly IDeletableEntityRepository<Category> categoryRepository;
+        private readonly ILogger<UpdateCategoryCommandHandler> logger;
 
-        public RenameCategoryCommandHandler(IDeletableEntityRepository<Category> categoryRepository) => this.categoryRepository = categoryRepository;
+        public UpdateCategoryCommandHandler(
+            IDeletableEntityRepository<Category> categoryRepository,
+            ILogger<UpdateCategoryCommandHandler> logger)
+        {
+            this.categoryRepository = categoryRepository;
+            this.logger = logger;
+        }
 
         public async ValueTask<OneOf<UpdateCategoryCommandResponseModel, NotFound, UniqueConstraintError>> Handle(
             UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
-            if (await this.categoryRepository.AllAsNoTrackingWithDeleted()
+            if (await this.categoryRepository
+                    .AllAsNoTrackingWithDeleted()
+                    .TagWith("Check Name Availability - All Categories")
                     .AnyAsync(x => x.Name == request.Name, cancellationToken))
             {
                 return new UniqueConstraintError("The Name provided is not available.");
@@ -38,7 +48,11 @@ public sealed class UpdateCategoryCommand : IRequest<OneOf<UpdateCategoryCommand
             category.Update(request.Name);
 
             this.categoryRepository.Update(category);
-            await this.categoryRepository.SaveChangesAsync(cancellationToken);
+
+            using (this.logger.EFQueryScope("Update Category"))
+            {
+                await this.categoryRepository.SaveChangesAsync(cancellationToken);
+            }
 
             return new UpdateCategoryCommandResponseModel();
         }

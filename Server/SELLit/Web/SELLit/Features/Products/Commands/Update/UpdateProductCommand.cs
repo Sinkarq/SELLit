@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using AspNetCore.Hashids.Json;
 using AutoMapper;
 using SELLit.Data.Common.Repositories;
+using SELLit.Server.Infrastructure.Extensions;
 using SELLit.Server.Services.Interfaces;
 
 namespace SELLit.Server.Features.Products.Commands.Update;
@@ -29,12 +30,18 @@ public sealed class UpdateProductCommand : IRequest<OneOf<UpdateProductCommandRe
         private readonly IDeletableEntityRepository<Product> productRepository;
         private readonly IMapper mapper;
         private readonly ICurrentUser currentUser;
+        private readonly ILogger<UpdateProductCommandHandler> logger;
 
-        public UpdateProductCommandHandler(IDeletableEntityRepository<Product> productRepository, IMapper mapper, ICurrentUser currentUser)
+        public UpdateProductCommandHandler(
+            IDeletableEntityRepository<Product> productRepository,
+            IMapper mapper,
+            ICurrentUser currentUser,
+            ILogger<UpdateProductCommandHandler> logger)
         {
             this.productRepository = productRepository;
             this.mapper = mapper;
             this.currentUser = currentUser;
+            this.logger = logger;
         }
 
         public async ValueTask<OneOf<UpdateProductCommandResponseModel, NotFound, Forbidden>> Handle(
@@ -62,7 +69,11 @@ public sealed class UpdateProductCommand : IRequest<OneOf<UpdateProductCommandRe
             );
 
             this.productRepository.Update(product);
-            await this.productRepository.SaveChangesAsync(cancellationToken);
+
+            using (this.logger.EFQueryScope("Update Product"))
+            {
+                await this.productRepository.SaveChangesAsync(cancellationToken);
+            }
 
             return this.mapper.Map<UpdateProductCommandResponseModel>(product);
         }

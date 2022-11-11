@@ -7,11 +7,13 @@ namespace SELLit.Server.Infrastructure.SwaggerConfiguration;
 internal static class SwaggerInstaller
 {
     internal static IApplicationBuilder UseSwaggerUI(this IApplicationBuilder app) =>
-        app.UseSwagger()
+        app
+            .UseSwagger(options => options.RouteTemplate = "docs/{documentName}/docs.json")
             .UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "SELLit V1");
+                options.SwaggerEndpoint("/docs/v1/docs.json", "SELLit V1");
                 options.RoutePrefix = string.Empty;
+                options.InjectStylesheet("/swagger-ui/SwaggerDark.css");
             });
     
     internal static IServiceCollection AddSwagger(this IServiceCollection services)

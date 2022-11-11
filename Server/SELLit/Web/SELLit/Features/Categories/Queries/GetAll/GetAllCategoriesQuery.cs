@@ -20,6 +20,7 @@ public sealed class GetAllCategoriesQuery : IRequest<IEnumerable<GetAllCategorie
             GetAllCategoriesQuery request, CancellationToken cancellationToken)
             => await this.categoryRepository
                 .AllAsNoTracking()
+                .TagWith("Get All Categories")
                 .Select(x => new GetAllCategoriesQueryResponseModel
                 {
                     Id = x.Id,

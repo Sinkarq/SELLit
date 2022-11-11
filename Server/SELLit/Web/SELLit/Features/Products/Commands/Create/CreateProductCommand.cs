@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using AspNetCore.Hashids.Json;
 using AutoMapper;
 using SELLit.Data.Common.Repositories;
+using SELLit.Server.Infrastructure.Extensions;
 using SELLit.Server.Infrastructure.Mapping.Interfaces;
 using SELLit.Server.Services.Interfaces;
 
@@ -29,26 +30,32 @@ public sealed class CreateProductCommand : IRequest<CreateProductCommandResponse
         private readonly IDeletableEntityRepository<Product> productRepository;
         private readonly IMapper mapper;
         private readonly ICurrentUser currentUser;
+        private readonly ILogger<CreateProductCommandHandler> logger;
 
         public CreateProductCommandHandler(
             IDeletableEntityRepository<Product> productRepository, 
             IMapper mapper, 
-            ICurrentUser currentUser)
+            ICurrentUser currentUser,
+            ILogger<CreateProductCommandHandler> logger)
         {
             this.productRepository = productRepository;
             this.mapper = mapper;
             this.currentUser = currentUser;
+            this.logger = logger;
         }
 
         public async ValueTask<CreateProductCommandResponseModel> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
             var product = this.mapper.Map<Product>(request);
-            product.UserId = this.currentUser.UserId;
+            product.UserId = this.currentUser.UserId!;
 
             await this.productRepository.AddAsync(product, cancellationToken);
-            var entitiesWritten = await this.productRepository.SaveChangesAsync(cancellationToken);
 
-            return entitiesWritten is 0 ? null! : this.mapper.Map<CreateProductCommandResponseModel>(product);
+            using (this.logger.EFQueryScope("Create Product"))
+            {
+                var entitiesWritten = await this.productRepository.SaveChangesAsync(cancellationToken);
+                return entitiesWritten is 0 ? null! : this.mapper.Map<CreateProductCommandResponseModel>(product);
+            }
         }
     }
 }

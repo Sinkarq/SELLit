@@ -10,8 +10,8 @@ public static partial class HttpClientExtensionMethods
     {
         var response = await client.PostAsJsonAsync(Routes.Identity.Login, new LoginCommand()
         {
-            Username = "Sinkarq",
-            Password = "password1234"
+            Username = DefaultUsersCredentials.AdminUser.Username,
+            Password = DefaultUsersCredentials.AdminUser.Password
         }).DeserializeHttpContentAsync<LoginCommandResponseModel>();
 
         client.DefaultRequestHeaders.Authorization =
@@ -24,8 +24,8 @@ public static partial class HttpClientExtensionMethods
     {
         var response = await client.PostAsJsonAsync(Routes.Identity.Login, new LoginCommand()
         {
-            Username = "John",
-            Password = "password1234"
+            Username = DefaultUsersCredentials.DefaultUser.Username,
+            Password = DefaultUsersCredentials.DefaultUser.Password
         }).DeserializeHttpContentAsync<LoginCommandResponseModel>();
 
         client.DefaultRequestHeaders.Authorization =

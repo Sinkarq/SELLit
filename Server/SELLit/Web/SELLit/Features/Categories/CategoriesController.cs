@@ -24,9 +24,9 @@ public sealed class CategoriesController : ApiController
     [Route(Routes.Categories.GetAll)]
     [SwaggerOperation(Summary = "Gets all categories")]
     [SwaggerResponse(200, "Gets all categories", typeof(List<GetAllCategoriesQueryResponseModel>))]
-    public async Task<IActionResult> GetCategories()
+    public async Task<IActionResult> GetCategories(CancellationToken ct)
     {
-        var categories = await this.Mediator.Send(GetAllCategoriesQuery.Instance);
+        var categories = await this.Mediator.Send(GetAllCategoriesQuery.Instance, ct);
 
         return this.Ok(categories);
     }
@@ -37,9 +37,10 @@ public sealed class CategoriesController : ApiController
     [SwaggerResponse(200, "Returns category", typeof(GetCategoryQueryResponseModel))]
     [SwaggerResponse(404, "Doesn't find category")]
     public async Task<IActionResult> GetCategory(
-        [FromRoute] GetCategoryQuery query)
+        [FromRoute] GetCategoryQuery query,
+        CancellationToken ct)
     {
-        var category = await this.Mediator.Send(query);
+        var category = await this.Mediator.Send(query, ct);
 
         if (category is null)
         {
@@ -56,9 +57,9 @@ public sealed class CategoriesController : ApiController
     [SwaggerResponse(200, "Returns created category", typeof(CreateCategoryCommandResponseModel))]
     [SwaggerResponse(400, "Error occurs", typeof(ErrorResponse))]
     public async Task<IActionResult> CreateCategory(
-        [FromBody]
-        CreateCategoryCommand command) =>
-        (await this.Mediator.Send(command)).Match<IActionResult>(
+        [FromBody] CreateCategoryCommand command,
+        CancellationToken ct) =>
+        (await this.Mediator.Send(command, ct)).Match<IActionResult>(
             category =>
             {
                 var id = this.hashids.Encode(category.Id);
@@ -73,8 +74,9 @@ public sealed class CategoriesController : ApiController
     [SwaggerResponse(204, "Deletes category")]
     [SwaggerResponse(404, "Doesn't find the category to delete")]
     public async Task<IActionResult> DeleteCategory(
-        [FromRoute] DeleteCategoryCommand command) =>
-        (await this.Mediator.Send(command)).Match<IActionResult>(
+        [FromRoute] DeleteCategoryCommand command,
+        CancellationToken ct) =>
+        (await this.Mediator.Send(command, ct)).Match<IActionResult>(
             deleted => this.NoContent(),
             notFound => this.NotFound()
         );
@@ -87,8 +89,9 @@ public sealed class CategoriesController : ApiController
     [SwaggerResponse(404, "Doesn't find the category to update")]
     [SwaggerResponse(400, "Error occurs", typeof(ErrorResponse))]
     public async Task<IActionResult> UpdateCategory(
-        [FromBody] UpdateCategoryCommand command)
-        => (await this.Mediator.Send(command)).Match<IActionResult>(
+        [FromBody] UpdateCategoryCommand command,
+        CancellationToken ct)
+        => (await this.Mediator.Send(command, ct)).Match<IActionResult>(
             updated => this.Ok(),
             notFound => this.NotFound(),
             error => this.BadRequest(new ErrorResponse(error.Message)) 

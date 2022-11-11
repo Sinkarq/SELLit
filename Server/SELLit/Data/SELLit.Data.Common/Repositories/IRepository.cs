@@ -22,4 +22,6 @@ public interface IRepository<TEntity> : IDisposable
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     
     DbSet<TEntity> Collection();
+
+    IQueryable<TEntity> TagWith(string tag);
 }

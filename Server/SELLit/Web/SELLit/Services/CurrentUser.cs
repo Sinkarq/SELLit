@@ -13,5 +13,5 @@ public sealed class CurrentUser : ICurrentUser
         this.UserId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 
-    public string UserId { get; }
+    public string? UserId { get; }
 }
