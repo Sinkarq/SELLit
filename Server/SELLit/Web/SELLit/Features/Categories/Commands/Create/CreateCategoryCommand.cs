@@ -33,7 +33,8 @@ public sealed class CreateCategoryCommand : IRequest<OneOf<CreateCategoryCommand
                 return new UniqueConstraintError("The Name provided is not available.");
             }
 
-            var category = new Category(request.Name);
+            var category = new Category {Name = request.Name};
+            
             await this.categoryRepository.AddAsync(category, cancellationToken);
 
             using (this.logger.EFQueryScope("Create Category"))

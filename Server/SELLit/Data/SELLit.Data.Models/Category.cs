@@ -6,14 +6,7 @@ public sealed class Category : BaseDeletableModel<int>
 {
     private readonly HashSet<Product> _products = new();
 
-    public Category(string name)
-    {
-        this.Name = GuardWith.NotNull(name);
-    }
-    
-    private Category() {}
-
-    public string Name { get; private set; } = "Unknown";
+    public required string Name { get; set; }
 
     public IReadOnlyCollection<Product> Products => _products;
 

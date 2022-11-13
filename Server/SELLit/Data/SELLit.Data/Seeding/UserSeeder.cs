@@ -11,7 +11,13 @@ public sealed class UserSeeder : ISeeder
         var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
         if (await userManager.FindByEmailAsync("sinanilhanov@gmail.com") == null)
         {
-            var adminUser = new User("Sinan", "Abdulgafurov", "sinanilhanov@gmail.com", DefaultUsersCredentials.AdminUser.Username);
+            var adminUser = new User
+            {
+                FirstName = "Sinan",
+                LastName = "Abdulgafurov",
+                Email = "sinanilhanov@gmail.com",
+                UserName = DefaultUsersCredentials.AdminUser.Username,
+            };
             await userManager.CreateAsync(adminUser, DefaultUsersCredentials.AdminUser.Password);
             await userManager.AddToRoleAsync(adminUser, GlobalConstants.AdministratorRoleName);
         }
@@ -19,7 +25,13 @@ public sealed class UserSeeder : ISeeder
 
         if (await userManager.FindByEmailAsync("john@gmail.com") == null)
         {
-            var user = new User("John", "Sashev", "john@gmail.com", DefaultUsersCredentials.DefaultUser.Username);
+            var user = new User
+            {
+                FirstName = "John",
+                LastName = "Sashev",
+                Email = "john@gmail.com",
+                UserName = DefaultUsersCredentials.DefaultUser.Username
+            };
             await userManager.CreateAsync(user, DefaultUsersCredentials.DefaultUser.Password);
         }
         

@@ -37,9 +37,9 @@ internal static class ExtensionMethods
     {
         var categories = new List<Category>()
         {
-            new("First"),
-            new("Second"),
-            new("Third")
+            new () {Name = "First"},
+            new() {Name = "Second"},
+            new() {Name = "Third"}
         };
 
         await dbContext.AddRangeAsync(categories);
@@ -50,16 +50,55 @@ internal static class ExtensionMethods
 
     internal static async Task<List<Product>> SeedProductsAsync(this ApplicationDbContext dbContext, string userId, int categoryId)
     {
-        var products = new List<Product>()
-        {
-            new("First", "First", "First", "First", 69.420, categoryId, userId, DeliveryResponsibility.Buyer),
-            new("Second", "First", "First", "First", 69.420, categoryId, userId, DeliveryResponsibility.Buyer),
-            new("Third", "First", "First", "First", 69.420, categoryId, userId, DeliveryResponsibility.Buyer),
-        };
+        var products = CreateMockedProducts(userId, categoryId);
 
         await dbContext.AddRangeAsync(products);
         await dbContext.SaveChangesAsync();
 
+        return products;
+    }
+
+    private static List<Product> CreateMockedProducts(string userId, int categoryId)
+    {
+        var products = new List<Product>()
+        {
+            new()
+            {
+                Title = "First",
+                Description = "First",
+                Location = "First",
+                PhoneNumber = "First",
+                Price = 69.420,
+                OrderCount = 0,
+                DeliveryResponsibility = DeliveryResponsibility.Buyer,
+                UserId = userId,
+                CategoryId = categoryId
+            },
+            new()
+            {
+                Title = "Second",
+                Description = "First",
+                Location = "First",
+                PhoneNumber = "First",
+                Price = 69.420,
+                OrderCount = 0,
+                DeliveryResponsibility = DeliveryResponsibility.Buyer,
+                UserId = userId,
+                CategoryId = categoryId
+            },
+            new()
+            {
+                Title = "Third",
+                Description = "First",
+                Location = "First",
+                PhoneNumber = "First",
+                Price = 69.420,
+                OrderCount = 0,
+                DeliveryResponsibility = DeliveryResponsibility.Buyer,
+                UserId = userId,
+                CategoryId = categoryId
+            },
+        };
         return products;
     }
 }

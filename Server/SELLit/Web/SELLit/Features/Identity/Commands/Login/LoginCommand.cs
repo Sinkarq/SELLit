@@ -43,7 +43,7 @@ public sealed class LoginCommand : IRequest<OneOf<LoginCommandResponseModel, Inv
 
             var roles = await this.userManager.GetRolesAsync(user);
 
-            var encryptedToken = this.identityService.GenerateJwtToken(user.Id, user.UserName, appSettings.Secret, roles);
+            var encryptedToken = this.identityService.GenerateJwtToken(user.Id, user.UserName!, appSettings.Secret, roles);
 
             return new LoginCommandResponseModel()
             {

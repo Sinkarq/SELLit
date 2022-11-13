@@ -6,19 +6,13 @@ public sealed class User : IdentityUser
 {
     private HashSet<Product> _products = new();
 
-    public User(string firstName, string lastName, string email, string userName)
-    {
-        this.FirstName = GuardWith.NotNull(firstName);
-        this.LastName = GuardWith.NotNull(lastName);
-        this.Email = GuardWith.NotNull(email);
-        this.UserName = GuardWith.NotNull(userName);
-    }
-    
-    private User() {}
+    public required string FirstName { get; set; }
 
-    public string FirstName { get; private set; } = "Unknown";
+    public required string LastName { get; set; }
 
-    public string LastName { get; private set; } = "Unknown";
-    
+    public override required string? Email { get; set; }
+
+    public override required string? UserName { get; set; }
+
     public IReadOnlyCollection<Product> Products => _products;
 }

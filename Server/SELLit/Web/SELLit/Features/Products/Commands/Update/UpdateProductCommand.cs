@@ -59,14 +59,12 @@ public sealed class UpdateProductCommand : IRequest<OneOf<UpdateProductCommandRe
                 return new Forbidden();
             }
 
-            product.Update(
-                request.Title,
-                request.Description,
-                request.Location,
-                request.PhoneNumber,
-                request.Price,
-                request.DeliveryResponsibility
-            );
+            product.Title = request.Title;
+            product.Description = request.Description;
+            product.Location = request.Location;
+            product.PhoneNumber = request.PhoneNumber;
+            product.Price = request.Price;
+            product.DeliveryResponsibility = request.DeliveryResponsibility;
 
             this.productRepository.Update(product);
 

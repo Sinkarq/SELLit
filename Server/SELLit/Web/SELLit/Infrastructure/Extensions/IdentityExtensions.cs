@@ -8,6 +8,7 @@ public static class IdentityExtensions
     {
         //return user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)
         //    !.Value;
-        return user.FindFirstValue(ClaimTypes.NameIdentifier);
+        return user.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? throw new InvalidOperationException("No NameIdentifier Claim provided");
     }
 }

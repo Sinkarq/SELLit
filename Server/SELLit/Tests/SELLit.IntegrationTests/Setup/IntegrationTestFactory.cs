@@ -36,7 +36,7 @@ public class IntegrationTestFactory<TProgram, TDbContext> : WebApplicationFactor
         builder.ConfigureTestServices(services =>
         {
             services.RemoveDbContext<ApplicationDbContext>();
-            services.AddDbContext<TDbContext>(options => { options.UseSqlServer(container.ConnectionString); });
+            services.AddDbContext<TDbContext>(options => { options.UseSqlServer(container.ConnectionString + "TrustServerCertificate=True;"); });
             //services.AddTransient<ArtworkCreator>();
         });
     }
