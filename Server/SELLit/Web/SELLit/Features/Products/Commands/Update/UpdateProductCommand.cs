@@ -1,13 +1,17 @@
 using System.Text.Json.Serialization;
 using AspNetCore.Hashids.Json;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SELLit.Data.Common.Repositories;
 using SELLit.Server.Infrastructure.Extensions;
+using SELLit.Server.Infrastructure.Mapping.Interfaces;
 using SELLit.Server.Services.Interfaces;
 
 namespace SELLit.Server.Features.Products.Commands.Update;
 
-public sealed class UpdateProductCommand : IRequest<OneOf<UpdateProductCommandResponseModel, NotFound, Forbidden>>
+public sealed class UpdateProductCommand : 
+    IRequest<OneOf<UpdateProductCommandResponseModel, NotFound, Forbidden>>,
+    IMapTo<Product>
 {
     [JsonConverter(typeof(HashidsJsonConverter))]
     public int Id { get; set; }
@@ -47,7 +51,9 @@ public sealed class UpdateProductCommand : IRequest<OneOf<UpdateProductCommandRe
         public async ValueTask<OneOf<UpdateProductCommandResponseModel, NotFound, Forbidden>> Handle(
             UpdateProductCommand request, CancellationToken cancellationToken)
         {
-            var product = await this.productRepository.Collection().FindAsync(request.Id);
+            var product = await this.productRepository
+                .AllAsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
             if (product is null)
             {
@@ -59,12 +65,7 @@ public sealed class UpdateProductCommand : IRequest<OneOf<UpdateProductCommandRe
                 return new Forbidden();
             }
 
-            product.Title = request.Title;
-            product.Description = request.Description;
-            product.Location = request.Location;
-            product.PhoneNumber = request.PhoneNumber;
-            product.Price = request.Price;
-            product.DeliveryResponsibility = request.DeliveryResponsibility;
+            product.Update(this.mapper.Map<Product>(request));
 
             this.productRepository.Update(product);
 

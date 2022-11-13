@@ -1,5 +1,4 @@
 using AspNetCore.Hashids.Mvc;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SELLit.Data.Common.Repositories;
@@ -15,12 +14,10 @@ public sealed class GetProductQuery : IRequest<GetProductQueryResponseModel>
         GetProductQueryHandler : IRequestHandler<GetProductQuery, GetProductQueryResponseModel>
     {
         private readonly IDeletableEntityRepository<Product> productRepository;
-        private readonly IMapper mapper;
 
-        public GetProductQueryHandler(IDeletableEntityRepository<Product> productRepository, IMapper mapper)
+        public GetProductQueryHandler(IDeletableEntityRepository<Product> productRepository)
         {
             this.productRepository = productRepository;
-            this.mapper = mapper;
         }
 
         public async ValueTask<GetProductQueryResponseModel> Handle(GetProductQuery request,

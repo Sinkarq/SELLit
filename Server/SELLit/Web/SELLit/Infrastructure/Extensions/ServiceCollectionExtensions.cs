@@ -14,6 +14,7 @@ using SELLit.Server.Infrastructure.Mapping;
 using SELLit.Server.Services;
 using SELLit.Server.Services.Interfaces;
 using Serilog;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace SELLit.Server.Infrastructure.Extensions;
 

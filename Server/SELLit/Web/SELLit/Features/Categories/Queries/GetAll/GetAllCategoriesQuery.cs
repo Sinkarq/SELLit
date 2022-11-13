@@ -11,9 +11,9 @@ public sealed class GetAllCategoriesQuery : IRequest<IEnumerable<GetAllCategorie
         GetAllCategoriesQueryHandler : IRequestHandler<GetAllCategoriesQuery,
             IEnumerable<GetAllCategoriesQueryResponseModel>>
     {
-        private readonly IDeletableEntityRepository<Data.Models.Category> categoryRepository;
+        private readonly IDeletableEntityRepository<Category> categoryRepository;
 
-        public GetAllCategoriesQueryHandler(IDeletableEntityRepository<Data.Models.Category> categoryRepository)
+        public GetAllCategoriesQueryHandler(IDeletableEntityRepository<Category> categoryRepository)
             => this.categoryRepository = categoryRepository;
 
         public async ValueTask<IEnumerable<GetAllCategoriesQueryResponseModel>> Handle(

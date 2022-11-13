@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELLit.IntegrationTests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELLit.Testing.ExtensionMethods", "Tests\SELLit.Testing.ExtensionMethods\SELLit.Testing.ExtensionMethods.csproj", "{28A63DC1-C17E-44B9-9EF1-CD965D75C8EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SELLit.UnitTests", "Tests\SELLit.UnitTests\SELLit.UnitTests.csproj", "{E29A0F9F-7A4C-446E-A17C-C8BDD9352B8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{28A63DC1-C17E-44B9-9EF1-CD965D75C8EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28A63DC1-C17E-44B9-9EF1-CD965D75C8EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28A63DC1-C17E-44B9-9EF1-CD965D75C8EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E29A0F9F-7A4C-446E-A17C-C8BDD9352B8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E29A0F9F-7A4C-446E-A17C-C8BDD9352B8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E29A0F9F-7A4C-446E-A17C-C8BDD9352B8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E29A0F9F-7A4C-446E-A17C-C8BDD9352B8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,6 +74,7 @@ Global
 		{AF9329B0-6727-4355-8A00-29E0352111BA} = {62E20375-D53B-4DBD-8519-04083E7DAC80}
 		{F5CB6C4C-F623-4220-B12C-BD57A01826BB} = {6D4C2CAB-4C0B-4145-98F7-E8DA54C358B3}
 		{28A63DC1-C17E-44B9-9EF1-CD965D75C8EE} = {6D4C2CAB-4C0B-4145-98F7-E8DA54C358B3}
+		{E29A0F9F-7A4C-446E-A17C-C8BDD9352B8B} = {6D4C2CAB-4C0B-4145-98F7-E8DA54C358B3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2E2320F7-8327-4E9A-936D-8A71855593AC}

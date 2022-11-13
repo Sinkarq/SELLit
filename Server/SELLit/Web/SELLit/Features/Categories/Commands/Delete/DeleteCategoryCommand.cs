@@ -1,6 +1,6 @@
 using AspNetCore.Hashids.Mvc;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.EntityFrameworkCore;
 using SELLit.Data.Common.Repositories;
 using SELLit.Server.Infrastructure.Extensions;
 
@@ -26,9 +26,10 @@ public sealed class DeleteCategoryCommand : IRequest<OneOf<DeleteCategoryCommand
 
         public async ValueTask<OneOf<DeleteCategoryCommandResponseModel, NotFound>> Handle(
             DeleteCategoryCommand request, CancellationToken cancellationToken)
-        { 
+        {
             var category = await this.categoryRepository
-                .Collection().FindAsync(request.Id);
+                .AllAsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
             if (category is null)
             {

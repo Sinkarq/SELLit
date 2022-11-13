@@ -21,4 +21,14 @@ public sealed class Product : BaseDeletableModel<int>
 
     public required int CategoryId { get; set; }
     public Category Category { get; set; } = default!;
+
+    public void Update(Product product)
+    {
+        this.Title = product.Title;
+        this.Description = product.Description;
+        this.Location = product.Location;
+        this.PhoneNumber = product.PhoneNumber;
+        this.Price = product.Price;
+        this.DeliveryResponsibility = product.DeliveryResponsibility;
+    }
 }

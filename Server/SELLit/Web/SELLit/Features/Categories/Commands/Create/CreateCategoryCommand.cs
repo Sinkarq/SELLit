@@ -26,7 +26,7 @@ public sealed class CreateCategoryCommand : IRequest<OneOf<CreateCategoryCommand
             CreateCategoryCommand request, CancellationToken cancellationToken)
         {
             if (await this.categoryRepository
-                    .AllAsNoTrackingWithDeleted()
+                    .AllAsNoTracking()
                     .TagWith("Check Name Availability - All Categories")
                     .AnyAsync(x => x.Name == request.Name, cancellationToken))
             {

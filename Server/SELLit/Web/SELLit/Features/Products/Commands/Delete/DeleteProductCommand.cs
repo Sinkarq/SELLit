@@ -1,5 +1,6 @@
 using AspNetCore.Hashids.Mvc;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SELLit.Data.Common.Repositories;
 using SELLit.Server.Infrastructure.Extensions;
 using SELLit.Server.Services.Interfaces;
@@ -32,8 +33,8 @@ public sealed class DeleteProductCommand : IRequest<OneOf<DeleteProductCommandRe
             DeleteProductCommand request, CancellationToken cancellationToken)
         {
             var entity = await this.productRepository
-                .Collection()
-                .FindAsync(request.Id);
+                .AllAsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
             if (entity is null)
             {

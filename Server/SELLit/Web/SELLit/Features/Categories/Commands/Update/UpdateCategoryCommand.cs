@@ -30,15 +30,16 @@ public sealed class UpdateCategoryCommand : IRequest<OneOf<UpdateCategoryCommand
             UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
             if (await this.categoryRepository
-                    .AllAsNoTrackingWithDeleted()
+                    .AllAsNoTracking()
                     .TagWith("Check Name Availability - All Categories")
                     .AnyAsync(x => x.Name == request.Name, cancellationToken))
             {
                 return new UniqueConstraintError("The Name provided is not available.");
             }
-            
+
             var category = await this.categoryRepository
-                .Collection().FindAsync(request.Id);
+                .AllAsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
             if (category is null)
             {
@@ -54,7 +55,11 @@ public sealed class UpdateCategoryCommand : IRequest<OneOf<UpdateCategoryCommand
                 await this.categoryRepository.SaveChangesAsync(cancellationToken);
             }
 
-            return new UpdateCategoryCommandResponseModel();
+            return new UpdateCategoryCommandResponseModel()
+            {
+                Id = category.Id,
+                Name = category.Name
+            };
         }
     }
 }
